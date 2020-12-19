@@ -1,5 +1,5 @@
-import ai from './calculator';
-import throttle from './throttle';
+import ai from '../calculator';
+import { throttle } from '../utils';
 
 const Brain = function(config, callback) {
   this.config = config;
