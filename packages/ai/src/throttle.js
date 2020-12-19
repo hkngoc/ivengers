@@ -1,4 +1,4 @@
-const throttle = (func) => {
+const throttle = (func, callback) => {
   let lastArgs, lastThis, lastCallTime, result, invoking;
 
   const invokeFunc = async () => {
@@ -11,6 +11,10 @@ const throttle = (func) => {
     invoking = true;
     result = await func.apply(thisArg, args)
     invoking = false;
+
+    if (callback && typeof(callback) == "function") {
+      callback(result);
+    }
     // unlock
 
     return result;

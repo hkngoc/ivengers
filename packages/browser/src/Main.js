@@ -1,9 +1,7 @@
 import { Fragment, useState } from 'react';
 import Query from './Query';
 
-import {
-  Machine
-} from '@ivengers/hostp';
+import Machine from '@ivengers/ai';
 
 const Main = () => {
   const [ status, setStatus ] = useState('idle');

@@ -1,5 +1,6 @@
 import { createServer } from 'http';
-import { Server } from 'socket.io';
+import Server from 'socket.io'; // for version 2
+// import { Server } from 'socket.io'; // for version 3
 
 const PORT = process.env.REACT_APP_SERVER_PORT;
 const CYCLE = process.env.REACT_APP_SERVER_CYCLE;
@@ -25,7 +26,7 @@ const clearBatch = () => {
 
 const sendBatch = () => {
   for (const user of users) {
-    user.emit('batch', [ counter ]);
+    user.emit('ticktack player', [ counter ]);
   }
   counter++;
 
@@ -54,7 +55,7 @@ io.on('connection', (socket) => {
   // identify by socket.id
   addUser(socket);
 
-  socket.on('start', () => {
+  socket.on('join game', () => {
     if (timeout == null) {
       clearBatch();
       sendBatch();

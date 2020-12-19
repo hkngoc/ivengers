@@ -47,7 +47,7 @@ const Query = (props) => {
     }
 
     const { team, player } = config;
-    const id = team == "no_select" ? (player ? "player2-xxx-xxx-xxx" : "player1-xxx-xxx-xxx") : team;
+    const id = team === "no_select" ? (player ? "player2-xxx-xxx-xxx" : "player1-xxx-xxx-xxx") : team;
     config.playerId = id;
 
     if (onConnect) {

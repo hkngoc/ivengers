@@ -1,12 +1,3 @@
-const wait = (amount) => {
-  return new Promise(resolve => {
-    return setTimeout(resolve, amount);
-  });
-};
+import machine from './machine';
 
-const ai = async (params) => {
-  console.log(params);
-  await wait(230);
-};
-
-export default ai;
+export default machine;

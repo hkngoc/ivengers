@@ -1,15 +1,19 @@
-import ai from '@ivengers/ai';
-import connect from './socket';
-import throttle from './throttle';
+import { connect } from '@ivengers/hostp';
+import Brain from './brain';
 
 const Machine = function(config) {
   this.config = config;
-  this.throttled = throttle(ai);
+  this.brain = new Brain(config, this.onCalculated.bind(this));
 };
 
 Machine.prototype.onHeart = function() {
   // console.log("on heart");
   // flush throttled or request server event if no longer working
+};
+
+Machine.prototype.onCalculated = function(result) {
+  console.log(result);
+  // socket emit drive result to server
 };
 
 Machine.prototype.onConnected = function() {
@@ -39,7 +43,7 @@ Machine.prototype.disconnect = function() {
 };
 
 Machine.prototype.ticktack = function(data) {
-  this.throttled.apply(this, data);
+  this.brain.ticktack.apply(this.brain, data);
 };
 
 export default Machine;

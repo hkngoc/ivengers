@@ -5,6 +5,9 @@
   "author": "Nguyen Van Hiep <hkngoc2@gmail.com>",
   "main": "src/index.js",
   "dependencies": {
+    "@ivengers/hostp": "0.0.0"
+  },
+  "devDependencies": {
     "dotenv": "^8.2.0"
   }
 }

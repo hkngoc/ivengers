@@ -5,7 +5,7 @@
   "author": "Nguyen Van Hiep <hkngoc2@gmail.com>",
   "main": "src/index.js",
   "scripts": {
-    "test": "echo \"Error: run tests from root\" && exit 1"
+    "start-v8": "node -r dotenv/config src/index.js dotenv_config_path=../browser/.env"
   },
   "dependencies": {
     "dotenv": "^8.2.0"
