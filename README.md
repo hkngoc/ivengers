@@ -23,7 +23,7 @@ Install dependency:
 npm install
 ```
 
-Link packages dependency"
+Link packages dependency
 ```bash
 lerna bootstrap
 ```
