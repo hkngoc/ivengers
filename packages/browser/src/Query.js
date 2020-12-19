@@ -123,7 +123,7 @@ const Query = (props) => {
           <Button
             id="connect"
             type="submit"
-            variant="info"
+            variant="secondary"
           >
             { status === "connected" ? "disconnect" : "connect"}
           </Button>

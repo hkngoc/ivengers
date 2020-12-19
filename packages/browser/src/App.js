@@ -10,7 +10,7 @@ const Title = () => {
   return (
     <div className="text-center">
       <h2>TRAINING STAGE</h2>
-      <h5>★ GST C O D E F E S T 2020 ★</h5>
+      <h5>★ Gờ És Tê C O D E F E S T 2020 ★</h5>
     </div>
   )
 }
@@ -18,7 +18,7 @@ const Title = () => {
 const Footer = () => {
   return (
     <footer id="sticky-footer">
-      <p className="text-center">© 2020 <span><img className="logo" alt="logo" src={logo}/></span></p>
+      <p className="text-center">© 2020 Pê Tê Giê<span><img className="logo" alt="logo" src={logo}/></span></p>
     </footer>
   )
 }

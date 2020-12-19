@@ -3,7 +3,7 @@ import Query from './Query';
 
 import {
   Machine
-} from '@test/hostp';
+} from '@ivengers/hostp';
 
 const Main = () => {
   const [ status, setStatus ] = useState('idle');

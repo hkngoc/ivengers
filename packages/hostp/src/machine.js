@@ -1,4 +1,4 @@
-import ai from '@test/ai';
+import ai from '@ivengers/ai';
 import connect from './socket';
 import throttle from './throttle';
 
