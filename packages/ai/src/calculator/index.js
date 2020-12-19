@@ -5,7 +5,7 @@ const wait = (amount) => {
 };
 
 const ai = async (data, more) => {
-  console.log(data, more);
+  console.log(JSON.stringify(data));
   await wait(230);
   return 1;
 };

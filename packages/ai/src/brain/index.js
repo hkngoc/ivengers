@@ -11,7 +11,7 @@ Brain.prototype.ticktack = function(data) {
   this.lastData = data;
 
   // invoke ai func with some data from preprocessing
-  this.throttled.apply(this, [...data, "moredata"]);
+  this.throttled.apply(this, [data, "moredata"]);
 };
 
 export default Brain;

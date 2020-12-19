@@ -10,6 +10,7 @@ import Blocking from './Blocking';
 
 import avatar from './assets/rocket_raccoon.svg';
 import gamepadIcon from './assets/gamepad-icon1.png';
+import GamePadSvg from './GamePadSvg';
 
 const HOSTS = process.env.REACT_APP_HOSTS.split(",");
 const DEFAULT_HOST = HOSTS[0];
@@ -24,7 +25,7 @@ const TEAMS = process.env.REACT_APP_TEAMS.split(";")
   });
 
 const Query = (props) => {
-  const { onConnect, onDisconnect, status, gamepad } = props;
+  const { onConnect, onDisconnect, status, gamepad, keyStatus } = props;
 
   const [ player, setPlayer ] = useState(gamepad);
   const [ disablePlayer, setDisablePlayer ] = useState(false);
@@ -46,7 +47,8 @@ const Query = (props) => {
       return;
     }
 
-    const { team, player } = config;
+    const { team } = config;
+
     const id = team === "no_select" ? (player ? "player2-xxx-xxx-xxx" : "player1-xxx-xxx-xxx") : team;
     config.playerId = id;
 
@@ -58,10 +60,17 @@ const Query = (props) => {
   return (
     <div id="main" className="p-5 mt-3 col-md-4">
       <div className="py-3">
-        <img
-          className="d-flex mx-auto w-100 avatar"
-          src={gamepad ? gamepadIcon : avatar}
-          alt="avatar"/>
+        {
+          gamepad ? (
+            <GamePadSvg {...keyStatus}/>
+          ) : (
+            <img
+              className="d-flex mx-auto w-100 avatar"
+              src={gamepad ? gamepadIcon : avatar}
+              alt="avatar"
+            />
+          )
+        }
       </div>
       <div className="py-3">
         <Form onSubmit={handleSubmit(onSubmit)}>
@@ -109,8 +118,6 @@ const Query = (props) => {
           </Blocking>
           <Blocking blocking={status === "connected"}>
             <BootstrapSwitchButton
-              name="player"
-              ref={register}
               disabled={disablePlayer || status === "connected"}
               onlabel="player2"
               onstyle="danger"
