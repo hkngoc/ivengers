@@ -2,7 +2,7 @@
 
 ## Overview
 
-![capture](./resources/capture.png)
+![capture](resources/capture.png)
 
 ## Features
 
