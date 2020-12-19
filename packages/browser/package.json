@@ -1,0 +1,38 @@
+{
+  "name": "@ivengers/browser",
+  "version": "0.0.0",
+  "description": "> TODO: description",
+  "author": "Nguyen Van Hiep <hkngoc2@gmail.com>",
+  "scripts": {
+    "start-browser": "react-scripts start",
+    "build-browser": "react-scripts build"
+  },
+  "dependencies": {
+    "@ivengers/hostp": "0.0.0",
+    "bootstrap": "^4.5.3",
+    "bootstrap-switch-button-react": "^1.2.0",
+    "react": "^17.0.1",
+    "react-bootstrap": "^1.4.0",
+    "react-dom": "^17.0.1",
+    "react-hook-form": "^6.13.0"
+  },
+  "devDependencies": {
+    "react-scripts": "^4.0.1"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version"
+    ]
+  }
+}

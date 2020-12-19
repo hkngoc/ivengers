@@ -1,0 +1,11 @@
+{
+  "name": "@ivengers/hostp",
+  "version": "0.0.0",
+  "description": "> TODO: description",
+  "author": "Nguyen Van Hiep <hkngoc2@gmail.com>",
+  "main": "src/index.js",
+  "dependencies": {
+    "@ivengers/ai": "0.0.0",
+    "socket.io-client": "^2.3.1"
+  }
+}

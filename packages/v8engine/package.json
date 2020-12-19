@@ -1,0 +1,13 @@
+{
+  "name": "@ivengers/v8engine",
+  "version": "0.0.0",
+  "description": "> TODO: description",
+  "author": "Nguyen Van Hiep <hkngoc2@gmail.com>",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "echo \"Error: run tests from root\" && exit 1"
+  },
+  "dependencies": {
+    "dotenv": "^8.2.0"
+  }
+}

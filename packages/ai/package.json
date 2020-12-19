@@ -1,0 +1,10 @@
+{
+  "name": "@ivengers/ai",
+  "version": "0.0.0",
+  "description": "> TODO: description",
+  "author": "Nguyen Van Hiep <hkngoc2@gmail.com>",
+  "main": "src/index.js",
+  "dependencies": {
+    "dotenv": "^8.2.0"
+  }
+}
