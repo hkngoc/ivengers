@@ -2,7 +2,7 @@
 
 ## Overview
 
-![Capture](https://raw.githubusercontent.com/hkngoc/ivengers/master/resources/capture.png)
+![capture](./resources/capture.png)
 
 ## Features
 
