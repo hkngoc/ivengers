@@ -6,12 +6,12 @@ const Brain = function(config, callback) {
   this.throttled = throttle(ai, callback);
 }
 
-Brain.prototype.ticktack = function(data) {
+Brain.prototype.ticktack = function(map) {
   // some logic handle latest data, middleware ...
-  this.lastData = data;
+  // const { tag } = map;
 
   // invoke ai func with some data from preprocessing
-  this.throttled.apply(this, [data, "moredata"]);
+  this.throttled.apply(this, [map, this.config]);
 }
 
 export default Brain;

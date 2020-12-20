@@ -12,7 +12,7 @@ Machine.prototype.onHeart = function() {
 }
 
 Machine.prototype.onCalculated = function(result) {
-  console.log(result);
+  // console.log(result);
   // socket emit drive result to server
 }
 

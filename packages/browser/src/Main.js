@@ -59,7 +59,7 @@ const Main = () => {
       return;
     }
 
-    console.log(lower);
+    // console.log(lower);
     const k = KEYS_MAP_GAMEPAD[lower];
 
     setKeyStatus({
@@ -152,7 +152,7 @@ const Main = () => {
 
   return (
     <Fragment>
-      <div className="d-flex" style={{ justifyContent: "space-around" }}>
+      <div className="d-flex justify-content-around">
         <Query
           onConnect={handleConnect}
           onDisconnect={handleDisconnect}

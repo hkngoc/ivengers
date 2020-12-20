@@ -12,7 +12,7 @@ const GamePadSvg = (props) => {
     analogRight,
     select,
     start,
-    activeColor = "#2F80ED",
+    activeColor = "#17A2B8",
     inactiveColor = "#E0E0E0",
     ...rest
   } = props;

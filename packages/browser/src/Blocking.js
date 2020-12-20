@@ -12,7 +12,7 @@ const Blocking = (props) => {
   return (
     <div className={`blocker ${blocking ? "block-ui" : ""}`}>
       { children }
-      { blocking && <Overlay />}
+      { blocking && <Overlay /> }
     </div>
   );
 }

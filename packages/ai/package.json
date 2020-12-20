@@ -5,7 +5,10 @@
   "author": "Nguyen Van Hiep <hkngoc2@gmail.com>",
   "main": "src/index.js",
   "dependencies": {
-    "@ivengers/hostp": "0.0.0"
+    "@ivengers/hostp": "0.0.0",
+    "behavior3js": "^0.2.2",
+    "lodash": "^4.17.20",
+    "pathfinding": "^0.4.18"
   },
   "devDependencies": {
     "dotenv": "^8.2.0"
