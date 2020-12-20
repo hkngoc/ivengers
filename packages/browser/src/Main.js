@@ -70,7 +70,7 @@ const Main = () => {
     if (gamepad) {
       gamepad.drive(KEYS_MAP_COMMAND[lower]);
     }
-  };
+  }
 
   const handleKeyUp = (e) => {
     const { key, type } = e;
@@ -89,9 +89,9 @@ const Main = () => {
       ...keyStatus,
       [k]: false
     });
-  };
+  }
 
-  const throttled = throttle(handleKeyDown, 150);
+  const throttled = throttle(handleKeyDown, 50);
 
   useEffect(() => {
     if (typeof document !== 'undefined') {
@@ -116,7 +116,7 @@ const Main = () => {
     } catch (e) {
       console.error(e);
     }
-  };
+  }
 
   const handleDisconnect = () => {
     if (machine) {
@@ -124,7 +124,7 @@ const Main = () => {
     }
     setMachine(null);
     setBotStatus('idle');
-  };
+  }
 
   const handleGamePadConnect = async (config) => {
     try {
@@ -135,7 +135,7 @@ const Main = () => {
     } catch (e) {
       console.error(e);
     }
-  };
+  }
 
   const handleGamePadDisconnect = () => {
     if (gamepad) {
@@ -143,12 +143,12 @@ const Main = () => {
     }
     setGamepad(null);
     setGamePadStatus('idle');
-  };
+  }
 
   const onGamePad = (e) => {
     // TODO
     // console.log(e);
-  };
+  }
 
   return (
     <Fragment>

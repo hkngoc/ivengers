@@ -98,6 +98,6 @@ const GamePadSvg = (props) => {
       />
     </svg>
   );
-};
+}
 
 export default GamePadSvg;

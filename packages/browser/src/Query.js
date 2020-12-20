@@ -34,12 +34,12 @@ const Query = (props) => {
 
   const onPlayerChange = (e) => {
     setPlayer(!player);
-  };
+  }
 
   const onTeamChange = (e) => {
     const val = e.target.value;
     setDisablePlayer(val !== "no_select");
-  };
+  }
 
   const onSubmit = (config) => {
     if (onDisconnect && status === "connected") {
@@ -55,7 +55,7 @@ const Query = (props) => {
     if (onConnect) {
       onConnect(config);
     }
-  };
+  }
 
   return (
     <div id="main" className="p-5 mt-3 col-md-4">

@@ -22,7 +22,7 @@ const clearBatch = () => {
   counter = 0;
   clearTimeout(timeout);
   timeout = null;
-};
+}
 
 const sendBatch = () => {
   for (const user of users) {
@@ -33,14 +33,14 @@ const sendBatch = () => {
   timeout = setTimeout(() => {
     sendBatch();
   }, CYCLE);
-};
+}
 
 const addUser= (user) => {
   const exist = users.find(u => u.id == user.id);
   if (!exist) {
     users.push(user);
   }
-};
+}
 
 const removeUser = (user) => {
   users = users.filter(u => u.id != user.id);
@@ -48,7 +48,7 @@ const removeUser = (user) => {
   if (users.length <= 0) {
     clearBatch();
   }
-};
+}
 
 // when each client connect to
 io.on('connection', (socket) => {

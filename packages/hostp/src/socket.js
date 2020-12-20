@@ -17,13 +17,13 @@ const connect = (config, { ticktack, onConnected }) => {
 
     resolve(socket);
   });
-};
+}
 
 const disconnect = (socket) => {
   if (socket) {
     socket.close();
   }
-};
+}
 
 export default connect;
 export {
