@@ -12,14 +12,17 @@ const UpdateFlame = function(ref) {
 UpdateFlame.prototype = newChildObject(MyBaseNode.prototype);
 
 UpdateFlame.prototype.tick = function(tree) {
-  const { map } = this.ref;
+  const { map, grid } = this.ref;
   const { map_info: { bombs } } = map;
 
-  for (const bomb of boms) {
-    this.ref.drawBombFlames(bomb);
+  for (const bomb of bombs) {
+    const { col, row } = bomb;
+
+    grid.dropBombAt(col, row);
+    this.ref.drawBombFlames(bomb, grid, this.ref.updateFlameFunction);
   }
 
   return SUCCESS;
-}
+};
 
 export default UpdateFlame;

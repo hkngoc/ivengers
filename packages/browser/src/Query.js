@@ -58,8 +58,8 @@ const Query = (props) => {
   }
 
   return (
-    <div id="main" className="p-5 mt-3 col-md-4">
-      <div className="py-3">
+    <div id="main" className="p-4 mt-3 col-md-4">
+      <div className="py-2">
         {
           gamepad ? (
             <GamePadSvg {...keyStatus}/>

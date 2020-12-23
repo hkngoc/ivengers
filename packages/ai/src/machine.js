@@ -4,17 +4,17 @@ import Brain from './brain';
 const Machine = function(config) {
   this.config = config;
   this.brain = new Brain(config, this.onCalculated.bind(this));
-}
+};
 
 Machine.prototype.onHeart = function() {
   // console.log("on heart");
   // flush throttled or request server event if no longer working
-}
+};
 
 Machine.prototype.onCalculated = function(result) {
   // console.log(result);
   // socket emit drive result to server
-}
+};
 
 Machine.prototype.onConnected = function() {
   const { gameId, playerId } = this.config;
@@ -22,7 +22,7 @@ Machine.prototype.onConnected = function() {
   if (this.socket) {
     this.socket.emit('join game', { game_id: gameId, player_id: playerId });
   }
-}
+};
 
 Machine.prototype.connect = async function() {
   const socket = await connect(this.config, {
@@ -32,7 +32,7 @@ Machine.prototype.connect = async function() {
   this.socket = socket;
 
   return socket;
-}
+};
 
 Machine.prototype.disconnect = function() {
   if (this.socket) {
@@ -40,10 +40,10 @@ Machine.prototype.disconnect = function() {
   }
 
   this.socket = null;
-}
+};
 
 Machine.prototype.ticktack = function(data) {
   this.brain.ticktack.apply(this.brain, data);
-}
+};
 
 export default Machine;
