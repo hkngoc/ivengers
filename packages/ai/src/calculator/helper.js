@@ -55,6 +55,22 @@ Pos.prototype.directTo = function(other) {
   }
 };
 
+const getDirect = (fromPos, toPos) => {
+  if (fromPos.x == toPos.x) {
+    if (fromPos.y < toPos.y) {
+      return Direct.DOWN;
+    } else {
+      return Direct.UP;
+    }
+  } else {
+    if (fromPos.x < toPos.x) {
+      return Direct.RIGHT;
+    } else {
+      return Direct.LEFT;
+    }
+  }
+};
+
 //===============================================================
 const CustomGrid = function(width, height, matrix) {
   Grid.apply(this, [width, height, matrix]);
@@ -170,5 +186,6 @@ export {
   Direct,
   DirectOf,
   Pos,
-  CustomGrid
+  CustomGrid,
+  getDirect
 }

@@ -18,7 +18,7 @@ SyncData.prototype.tick = function(tree) {
   let { map_info: { players, bombs, human, viruses, size: { cols, rows } } } = map;
 
   // map players from array to map
-  players = _.keyBy(players, "id");
+  players = _.keyBy(players, 'id');
   map.map_info.players = players;
 
   // sync bomb power by reference bomb.playerId to
@@ -74,7 +74,7 @@ SyncData.prototype.tick = function(tree) {
   this.ref.map =  map;
   this.ref.grid = grid;
 
-  console.log(map);
+  // console.log(map);
   return SUCCESS;
 };
 

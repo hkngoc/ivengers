@@ -3,6 +3,7 @@ import {
   Blackboard,
   Priority, // Selector
   Sequence, //
+  Inverter,
   Failer
 } from 'behavior3js';
 
@@ -14,12 +15,21 @@ import {
   UpdateVirus,
   UpdateHuman,
   UpdateGrid,
+  CalculateBombDelay,
+  FindBombCandidate,
+  VoteBomb,
+  MoveToDropBomb,
+  IsNotSafe,
+  FindSafePlace,
+  VoteSafePlace,
+  MoveToSafe,
 } from './nodes';
 
 import {
   Pos,
   Direct,
-  DirectOf
+  DirectOf,
+  getDirect
 } from './helper';
 
 //===============================================================
@@ -33,16 +43,16 @@ const wait = (amount) => {
 /*definitation here*/
 const AI = function(map, config) {
   const tree = new BehaviorTree(null, {
-    title: "BTs of iVengers"
+    title: 'BTs of iVengers'
   });
   tree.root = this.buildTree();
 
   const blackboard = new Blackboard();
 
-  this.map = map;
-  this.blackboard = blackboard;
+  this.map        = map;
   this.tree       = tree;
   this.config     = config;
+  this.blackboard = blackboard;
 };
 
 AI.prototype.buildTree = function() {
@@ -53,8 +63,10 @@ AI.prototype.buildTree = function() {
         children: [
           new SyncData(this),
           new UpdateFlame(this),
+          // need implement guest path of virus/human more precision. Currently, ignore Hazard from virus/human
           new UpdateVirus(this),
           new UpdateHuman(this),
+          // need implement update enemy grid in future
           new UpdateGrid(this),
           new Failer() // make sequence pre-process alway Fail
         ]
@@ -62,15 +74,34 @@ AI.prototype.buildTree = function() {
       new Sequence({
         name: 'Eat',
         children: [
+          new Failer() // dump
         ]
       }),
       new Sequence({
         name: 'Bomb',
-        children: []
+        children: [
+          new Inverter({
+            child: new IsNotSafe(this)
+          }),
+          new CalculateBombDelay(this),
+          new FindBombCandidate(this),
+          new VoteBomb(this),
+          new MoveToDropBomb(this)
+        ]
       }),
       new Sequence({
         name: 'Safe',
-        children: []
+        children: [
+          new IsNotSafe(this),
+          new Priority({
+            children: [
+              new FindSafePlace(this) // find really safe place
+              // dead or alive. implement case all place are not safe -> find best place in that context
+            ]
+          }),
+          new VoteSafePlace(this),
+          new MoveToSafe(this)
+        ]
       })
     ]
   });
@@ -94,6 +125,18 @@ AI.prototype.getPlayerPower = function(id) {
   const { power } = player;
 
   return power;
+};
+
+AI.prototype.getPlayer = function(id) {
+  const { map_info: { players: { [id]: player } } } = this.map;
+
+  return player;
+};
+
+AI.prototype.getMyPlayer = function() {
+  const { myId }= this.map;
+
+  return this.getPlayer(myId);
 };
 
 AI.prototype.getDirectOf = function(direction) {
@@ -207,10 +250,29 @@ AI.prototype.timeToCrossACell = function(id) {
   return 1000 * 55 / speed;
 };
 
+AI.prototype.tracePath = function(pos, grid) {
+  let node = grid.getNodeAt(pos.x, pos.y);
+  let directs = '';
+
+  while (node.parent) {
+    const { parent } = node;
+    const direct = getDirect({ x: parent.x, y: parent.y }, { x: node.x, y: node.y });
+    directs = direct + directs;
+
+    node = parent;
+  }
+
+  return directs;
+};
+
 //===============================================================
 /*invoking here*/
 AI.prototype.tick = function() {
   this.tree.tick({}, this.blackboard);
+
+  const result = this.blackboard.get('result', true);
+
+  return result;
 };
 
 const wrapper = async (...params) => {
@@ -224,7 +286,7 @@ const wrapper = async (...params) => {
   });
 
   // just mock for currenly implement
-  await wait(250);
+  await wait(150);
 
   return result;
 };

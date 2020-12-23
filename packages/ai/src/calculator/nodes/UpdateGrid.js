@@ -20,18 +20,11 @@ const UpdateGrid = function(ref) {
 UpdateGrid.prototype = newChildObject(MyBaseNode.prototype);
 
 UpdateGrid.prototype.tick = function(tree) {
-  const {
-    grid,
-    map: {
-      myId,
-      map_info
-    }
-  } = this.ref;
+  const { grid } = this.ref;
+  const player = this.ref.getMyPlayer();
+  const { id, currentPosition: { col:x, row: y } } = player;
 
-  const { players: { [myId]: player } } =  map_info;
-  const { currentPosition: { col: x, row: y } } = player;
-
-  this.travelGrid(myId, { x, y }, grid);
+  this.travelGrid(id, { x, y }, grid);
 
   return SUCCESS;
 };
@@ -43,7 +36,7 @@ UpdateGrid.prototype.travelGrid = function(playerId, pos, grid) {
 
   const playerNumber = this.ref.getPlayerNumber(playerId);
   const { x, y } = pos;
-  let startNode = grid.getNodeAt(x, y);
+  const startNode = grid.getNodeAt(x, y);
   startNode.f = 0;
   startNode.travelCost = 0;
   startNode.bombProfit = {};
@@ -94,8 +87,6 @@ UpdateGrid.prototype.travelGrid = function(playerId, pos, grid) {
       }
     }
   }
-
-  console.log(grid);
 };
 
 UpdateGrid.prototype.canPlayerWalk = function(playerId, node, cost, grid) {
@@ -137,14 +128,62 @@ UpdateGrid.prototype.tryPlaceBomb = function(playerId, pos, grid) {
     index: 0, // hardcode, current implement no need infor about index of bomb, but it may need in future
     playerId,
     power,
+    remainTime: 2000
   };
 
   // calculate score of explore and kill enemy...
   const profit = this.ref.drawBombFlames(tempBomb, tempGrid, this.ref.updateFlameFunction);
 
   // check where can find safe place/path
+  const safe = this.findSafePlace(playerId, pos, tempGrid);
+  profit.safe = safe;
 
   return profit;
+};
+
+UpdateGrid.prototype.findSafePlace = function(playerId, pos, grid) {
+  const playerNumber = this.ref.getPlayerNumber(playerId);
+
+  const { x, y } = pos;
+  const startNode = grid.getNodeAt(x, y);
+  startNode.safeOpened = true;
+  startNode.safeTravelCost = 0;
+
+  const openList = [];
+  openList.push(startNode);
+
+  while (openList.length > 0) {
+    const node = openList.shift();
+    node.safeClosed = true;
+
+    if (this.isSafePlace(node)) {
+      return true;
+    }
+
+    const nextTravelCost = node.safeTravelCost + 1;
+    const neighbors = grid.getNeighbors(node, DiagonalMovement.Never, playerNumber);
+    for (const neighbor of neighbors) {
+      // skip this neighbor if it has been inspected before
+      if (neighbor.safeClosed || neighbor.safeOpened) {
+        continue;
+      }
+
+      const walkable = this.canPlayerWalk(playerId, neighbor, nextTravelCost, grid);
+      if (walkable) {
+        openList.push(neighbor);
+        neighbor.safeOpened = true;
+        neighbor.safeTravelCost = nextTravelCost;
+      }
+    }
+  }
+
+  return false;
+};
+
+UpdateGrid.prototype.isSafePlace = function(node) {
+  const { flameRemain = [] } = node;
+
+  return flameRemain.length <= 0;
 };
 
 UpdateGrid.prototype.getProfitAdder = function(bomb, items) {

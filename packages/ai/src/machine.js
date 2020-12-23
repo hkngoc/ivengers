@@ -11,9 +11,12 @@ Machine.prototype.onHeart = function() {
   // flush throttled or request server event if no longer working
 };
 
-Machine.prototype.onCalculated = function(result) {
-  // console.log(result);
-  // socket emit drive result to server
+Machine.prototype.onCalculated = function(directions) {
+  console.log(directions);
+  if (this.socket && directions) {
+    // socket emit drive result to server
+    this.socket.emit('drive player', { direction: directions });
+  }
 };
 
 Machine.prototype.onConnected = function() {

@@ -12,7 +12,7 @@ const throttle = (func, callback) => {
     result = await func.apply(thisArg, args)
     invoking = false;
 
-    if (callback && typeof(callback) == "function") {
+    if (callback && typeof(callback) == 'function') {
       callback(result);
     }
     // unlock
