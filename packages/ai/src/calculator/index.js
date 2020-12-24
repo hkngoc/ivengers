@@ -8,6 +8,7 @@ import {
 } from 'behavior3js';
 
 import _ from 'lodash';
+import Logger from 'js-logger';
 
 import {
   SyncData,
@@ -15,6 +16,11 @@ import {
   UpdateVirus,
   UpdateHuman,
   UpdateGrid,
+  FindBonusCandidate,
+  NoBombLeft,
+  VoteBonus,
+  VoteBonusWithBombLeft,
+  MoveToBonus,
   CalculateBombDelay,
   FindBombCandidate,
   VoteBomb,
@@ -74,7 +80,30 @@ AI.prototype.buildTree = function() {
       new Sequence({
         name: 'Eat',
         children: [
-          new Failer() // dump
+          // new Inverter({
+          //   child: new IsNotSafe(this)
+          // }),
+          // new NoBombLeft(this), // dump
+          // new CalculateBombDelay(this),
+          // new FindBonusCandidate(this),
+          // new Priority({
+          //   children: [
+          //     new Sequence({
+          //       children: [
+          //         new NoBombLeft(this),
+          //         new VoteBonus(this)
+          //       ]
+          //     }),
+          //     new Priority({
+          //       children: [
+          //         new VoteBonusWithBombLeft(this),
+          //         new VoteBonus(this)
+          //       ]
+          //     })
+          //   ]
+          // }),
+          // new MoveToBonus(this)
+          new Failer()
         ]
       }),
       new Sequence({
@@ -279,14 +308,17 @@ const wrapper = async (...params) => {
   // console.log(JSON.stringify(params));
   // console.log(params);
 
+  Logger.useDefaults();
+  Logger.time('logic');
   const result = await new Promise((resolve) => {
     const directions = new AI(...params).tick();
 
     resolve(directions);
   });
+  Logger.timeEnd('logic');
 
   // just mock for currenly implement
-  await wait(150);
+  await wait(170);
 
   return result;
 };

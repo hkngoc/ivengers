@@ -4,6 +4,12 @@ import UpdateVirus from './UpdateVirus';
 import UpdateHuman from './UpdateHuman';
 import UpdateGrid from './UpdateGrid';
 
+import FindBonusCandidate from './FindBonusCandidate';
+import NoBombLeft from './NoBombLeft';
+import VoteBonus from './VoteBonus';
+import VoteBonusWithBombLeft from './VoteBonusWithBombLeft';
+import MoveToBonus from './MoveToBonus';
+
 import CalculateBombDelay from './CalculateBombDelay';
 import FindBombCandidate from './FindBombCandidate';
 import VoteBomb from './VoteBomb';
@@ -20,6 +26,11 @@ export {
   UpdateVirus,
   UpdateHuman,
   UpdateGrid,
+  FindBonusCandidate,
+  NoBombLeft,
+  VoteBonus,
+  VoteBonusWithBombLeft,
+  MoveToBonus,
   CalculateBombDelay,
   FindBombCandidate,
   VoteBomb,

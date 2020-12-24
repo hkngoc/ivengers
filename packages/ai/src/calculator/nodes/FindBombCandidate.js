@@ -83,8 +83,8 @@ FindBombCandidate.prototype.scoreFn = function(node) {
   if (safe) {
     score = score + box + enemy;
   }
-  score = score + gifts.length;
-  score = score + spoils.length;
+  score = score + 1 * gifts.length;
+  score = score + 1 * spoils.length;
 
   return score;
 };

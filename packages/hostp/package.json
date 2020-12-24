@@ -5,6 +5,7 @@
   "author": "Nguyen Van Hiep <hkngoc2@gmail.com>",
   "main": "src/index.js",
   "dependencies": {
+    "js-logger": "^1.6.1",
     "socket.io-client": "^3.0.4"
   }
 }

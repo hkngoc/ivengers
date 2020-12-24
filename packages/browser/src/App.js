@@ -1,4 +1,5 @@
 import React, { Fragment } from 'react';
+import Logger from 'js-logger';
 
 import Main from './Main';
 
@@ -25,6 +26,8 @@ const Footer = () => {
 }
 
 const App = () => {
+  Logger.useDefaults();
+
   return (
     <Fragment>
       <div id="content" className="flex-grow-1">

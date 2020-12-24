@@ -5,6 +5,7 @@
   "author": "Nguyen Van Hiep <hkngoc2@gmail.com>",
   "main": "src/index.js",
   "dependencies": {
-    "dotenv": "^8.2.0"
+    "dotenv": "^8.2.0",
+    "js-logger": "^1.6.1"
   }
 }

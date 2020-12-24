@@ -11,6 +11,7 @@
     "@ivengers/ai": "0.0.0",
     "bootstrap": "^4.5.3",
     "bootstrap-switch-button-react": "^1.2.0",
+    "js-logger": "^1.6.1",
     "lodash.throttle": "^4.1.1",
     "react": "^17.0.1",
     "react-bootstrap": "^1.4.0",

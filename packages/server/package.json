@@ -7,6 +7,7 @@
     "start-server": "node -r dotenv/config src/index.js dotenv_config_path=../browser/.env"
   },
   "dependencies": {
+    "js-logger": "^1.6.1",
     "socket.io": "^3.0.4"
   },
   "devDependencies": {

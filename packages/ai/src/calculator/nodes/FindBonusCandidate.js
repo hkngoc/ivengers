@@ -3,16 +3,18 @@ import {
   FAILURE
 } from 'behavior3js';
 
+import _ from 'lodash';
+
 import { newChildObject } from '../../utils';
 import MyBaseNode from './MyBaseNode';
 
-const FindSafePlace = function(ref) {
+const FindBonusCandidate = function(ref) {
   MyBaseNode.apply(this, [ref]);
 };
 
-FindSafePlace.prototype = newChildObject(MyBaseNode.prototype);
+FindBonusCandidate.prototype = newChildObject(MyBaseNode.prototype);
 
-FindSafePlace.prototype.tick = function(tree) {
+FindBonusCandidate.prototype.tick = function(tree) {
   const {
     map: {
       map_info: {
@@ -51,19 +53,25 @@ FindSafePlace.prototype.tick = function(tree) {
   if (candidates.length <= 0) {
     return FAILURE;
   } else {
-    blackboard.set('safeCandidates', candidates, true);
+    blackboard.set('bonusCandidates', candidates, true);
 
     return SUCCESS;
   }
 };
 
-FindSafePlace.prototype.conditionFn = function(node) {
-  const { travelCost, flameRemain = [] } = node;
+FindBonusCandidate.prototype.conditionFn = function(node) {
+  const {
+    travelCost,
+    value,
+    scoreProfit = {}
+  } = node;
 
-  return travelCost >= 0 && flameRemain.length <= 0;
+  const { gifts = [], spoils = [] } = scoreProfit;
+
+  return travelCost >= 0 && (gifts.length > 0 || spoils.length > 0);
 };
 
-FindSafePlace.prototype.scoreFn = function(node) {
+FindBonusCandidate.prototype.scoreFn = function(node) {
   const {
     travelCost,
     scoreProfit = {},
@@ -83,7 +91,7 @@ FindSafePlace.prototype.scoreFn = function(node) {
   return score;
 };
 
-FindSafePlace.prototype.extremeFn = function(score, cost) {
+FindBonusCandidate.prototype.extremeFn = function(score, cost) {
   if (cost <= 0) {
     cost = 1;
   }
@@ -102,4 +110,4 @@ FindSafePlace.prototype.extremeFn = function(score, cost) {
   return score;
 };
 
-export default FindSafePlace;
+export default FindBonusCandidate;

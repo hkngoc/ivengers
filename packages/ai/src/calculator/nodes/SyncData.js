@@ -70,6 +70,15 @@ SyncData.prototype.tick = function(tree) {
     [enemyId]: 7
   };
 
+  // hot fix
+  for (let i = 0; i < rows; i++) {
+    for (let j = 0; j < cols; j++) {
+      if (map.map_info.map[i][j] == 4 || map.map_info.map[i][j] == 5) {
+        map.map_info.map[i][j] = 0;
+      }
+    }
+  }
+
   const grid = new Grid(cols, rows, map.map_info.map);
   this.ref.map =  map;
   this.ref.grid = grid;
