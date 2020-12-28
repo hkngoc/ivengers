@@ -19,7 +19,7 @@ MoveToBonus.prototype.tick = function(tree) {
 
   const winner = blackboard.get('bonusWinner', true);
   const { position } = winner;
-  const directs = this.ref.tracePath(position, grid);
+  const { directs, positions } = this.ref.tracePath(position, grid);
 
   blackboard.set('result', directs, true);
 

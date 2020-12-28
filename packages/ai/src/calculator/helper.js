@@ -171,7 +171,7 @@ CustomGrid.prototype.wouldStopHumanAt = function(x, y) {
 };
 
 CustomGrid.prototype.wouldStopVirusAt = function(x, y) {
-  return x == 1 || x == this.width - 1 || y == 1 || y == this.height - 1;
+  return this.isInside(x, y) && ([1, 2].includes(this.nodes[y][x].value));
 };
 
 CustomGrid.prototype.dropBombAt = function(x, y){

@@ -83,7 +83,7 @@ AI.prototype.buildTree = function() {
           // new Inverter({
           //   child: new IsNotSafe(this)
           // }),
-          // new NoBombLeft(this), // dump
+          // // new NoBombLeft(this), // dump
           // new CalculateBombDelay(this),
           // new FindBonusCandidate(this),
           // new Priority({
@@ -238,7 +238,7 @@ AI.prototype.scoreForBombing = function(playerId, pos, grid, remainTime) {
   const node = grid.getNodeAt(x, y);
 
   // kill enemy
-  if ([6, 7].includes(node.value) && node.value != playerNumber) {
+  if ([9, 10].includes(node.value) && node.value != playerNumber) {
     score.enemy = 1;
   }
 
@@ -282,16 +282,29 @@ AI.prototype.timeToCrossACell = function(id) {
 AI.prototype.tracePath = function(pos, grid) {
   let node = grid.getNodeAt(pos.x, pos.y);
   let directs = '';
+  const positions = [{
+    x: pos.x,
+    y: pos.y
+  }];
 
   while (node.parent) {
     const { parent } = node;
     const direct = getDirect({ x: parent.x, y: parent.y }, { x: node.x, y: node.y });
     directs = direct + directs;
+    positions.splice(0, 0, {
+      x: parent.x,
+      y: parent.y
+    });
 
     node = parent;
   }
 
-  return directs;
+  positions[0].visited = true;
+
+  return {
+    directs,
+    positions
+  };
 };
 
 //===============================================================

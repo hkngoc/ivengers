@@ -21,6 +21,8 @@ SyncData.prototype.tick = function(tree) {
   players = _.keyBy(players, 'id');
   map.map_info.players = players;
 
+  map.map_info.gifts = [];
+
   // sync bomb power by reference bomb.playerId to
   bombs = _.map(bombs, (bomb, index) => {
     const { playerId } = bomb;
@@ -52,7 +54,7 @@ SyncData.prototype.tick = function(tree) {
   // map player sort Id
   const myId = this.ref.getPlayerSortId(playerId);
   const { col: mCol, row: mRow } = players[myId].currentPosition;
-  map.map_info.map[mRow][mCol] = 6;
+  map.map_info.map[mRow][mCol] = 9;
 
   const enemies = _(players)
     .keys()
@@ -61,13 +63,13 @@ SyncData.prototype.tick = function(tree) {
 
   const enemyId = enemies[0];
   const { col: eCol, row: eRow } = players[enemyId].currentPosition;
-  map.map_info.map[eRow][eCol] = 7;
+  map.map_info.map[eRow][eCol] = 10;
 
   map.myId = myId;
   map.enemyId = enemyId;
   map.playerNumber = {
-    [myId]: 6,
-    [enemyId]: 7
+    [myId]: 9,
+    [enemyId]: 10
   };
 
   // hot fix
@@ -83,7 +85,7 @@ SyncData.prototype.tick = function(tree) {
   this.ref.map =  map;
   this.ref.grid = grid;
 
-  // console.log(map);
+  console.log(map);
   return SUCCESS;
 };
 

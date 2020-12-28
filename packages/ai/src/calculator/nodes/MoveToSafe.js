@@ -17,7 +17,7 @@ MoveToSafe.prototype.tick = function(tree) {
 
   const winner = blackboard.get('safeWinner', true);
   const { position } = winner;
-  const directs = this.ref.tracePath(position, grid);
+  const { directs, positions } = this.ref.tracePath(position, grid);
 
   const prefix = blackboard.get('safeDirectPrefix', true);
 
