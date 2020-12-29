@@ -5,7 +5,7 @@ import _ from 'lodash';
 
 import { newChildObject } from '../../utils';
 import MyBaseNode from './MyBaseNode';
-import { CustomGrid as Grid } from '../helper';
+import { CustomGrid as Grid } from '../variant/helper';
 
 const SyncData = function(ref) {
   MyBaseNode.apply(this, [ref]);

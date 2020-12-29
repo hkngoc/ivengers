@@ -3,7 +3,7 @@ import {
   Node
 } from 'pathfinding';
 
-import { newChildObject } from '../utils';
+import { newChildObject } from '../../utils';
 
 //===============================================================
 const Direct = {

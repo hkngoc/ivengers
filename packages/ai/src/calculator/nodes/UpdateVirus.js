@@ -4,7 +4,7 @@ import {
 
 import { newChildObject } from '../../utils';
 import MyBaseNode from './MyBaseNode';
-import { Pos } from '../helper';
+import { Pos } from '../variant/helper';
 
 const UpdateVirus = function(ref) {
   MyBaseNode.apply(this, [ref]);

@@ -11,7 +11,7 @@ import _ from 'lodash';
 
 import { newChildObject } from '../../utils';
 import MyBaseNode from './MyBaseNode';
-import { Pos } from '../helper';
+import { Pos } from '../variant/helper';
 
 const UpdateGrid = function(ref) {
   MyBaseNode.apply(this, [ref]);
@@ -25,6 +25,8 @@ UpdateGrid.prototype.tick = function(tree) {
   const { id, currentPosition: { col:x, row: y } } = player;
 
   this.travelGrid(id, { x, y }, grid);
+
+  console.log(grid);
 
   return SUCCESS;
 };

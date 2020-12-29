@@ -1,0 +1,114 @@
+import {
+  Priority, // Selector
+  Sequence,
+  Failer,
+  Inverter
+} from 'behavior3js';
+
+import {
+  SyncData,
+  UpdateFlame,
+  UpdateVirus,
+  UpdateHuman,
+  UpdateGrid,
+  FindBonusCandidate,
+  NoBombLeft,
+  VoteBonus,
+  VoteBonusWithBombLeft,
+  MoveToBonus,
+  CalculateBombDelay,
+  FindBombCandidate,
+  VoteBomb,
+  MoveToDropBomb,
+  IsNotSafe,
+  FindSafePlace,
+  VoteSafePlace,
+  MoveToSafe,
+} from '../nodes';
+
+import AI from './ai';
+
+import { newChildObject } from '../../utils';
+
+const First = function(map, config) {
+  AI.apply(this, [map, config]);
+};
+
+First.prototype = newChildObject(AI.prototype);
+
+AI.prototype.buildTree = function() {
+  return new Priority({
+    children:[
+      new Sequence({
+        name: 'pre-processing',
+        children: [
+          new SyncData(this),
+          new UpdateFlame(this),
+          // need implement guest path of virus/human more precision. Currently, ignore Hazard from virus/human
+          new UpdateVirus(this),
+          new UpdateHuman(this),
+          // need implement update enemy grid in future
+          new UpdateGrid(this),
+          new Failer() // make sequence pre-process alway Fail
+        ]
+      }),
+      new Sequence({
+        name: 'Eat',
+        children: [
+          // new Inverter({
+          //   child: new IsNotSafe(this)
+          // }),
+          // // new NoBombLeft(this), // dump
+          // new CalculateBombDelay(this),
+          // new FindBonusCandidate(this),
+          // new Priority({
+          //   children: [
+          //     new Sequence({
+          //       children: [
+          //         new NoBombLeft(this),
+          //         new VoteBonus(this)
+          //       ]
+          //     }),
+          //     new Priority({
+          //       children: [
+          //         new VoteBonusWithBombLeft(this),
+          //         new VoteBonus(this)
+          //       ]
+          //     })
+          //   ]
+          // }),
+          // new MoveToBonus(this)
+          new Failer()
+        ]
+      }),
+      new Sequence({
+        name: 'Bomb',
+        children: [
+          new Inverter({
+            child: new IsNotSafe(this)
+          }),
+          new CalculateBombDelay(this),
+          new FindBombCandidate(this),
+          new VoteBomb(this),
+          new MoveToDropBomb(this)
+        ]
+      }),
+      new Sequence({
+        name: 'Safe',
+        children: [
+          new IsNotSafe(this),
+          new Priority({
+            children: [
+              new FindSafePlace(this) // find really safe place
+              // dead or alive. implement case all place are not safe -> find best place in that context
+            ]
+          }),
+          new VoteSafePlace(this),
+          new MoveToSafe(this)
+        ]
+      })
+    ]
+  });
+};
+
+export default First;
