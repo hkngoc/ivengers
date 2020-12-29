@@ -22,9 +22,9 @@ MoveToSafe.prototype.tick = function(tree) {
   const prefix = blackboard.get('safeDirectPrefix', true);
 
   if (prefix) {
-    blackboard.set('result', `${prefix}${directs}`, true);
+    blackboard.set('result', { directs: `${prefix}${directs}`, positions, winner }, true);
   } else {
-    blackboard.set('result', directs, true);
+    blackboard.set('result', { directs, positions, winner }, true);
   }
 
   return SUCCESS;

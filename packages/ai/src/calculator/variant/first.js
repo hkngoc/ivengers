@@ -11,15 +11,22 @@ import {
   UpdateVirus,
   UpdateHuman,
   UpdateGrid,
+  UpdateLastResult,
+
   FindBonusCandidate,
   NoBombLeft,
   VoteBonus,
   VoteBonusWithBombLeft,
   MoveToBonus,
+
   CalculateBombDelay,
   FindBombCandidate,
+  TargetSuitableWithBomb,
+  VoteBombWithTarget,
+  MoveToDropBombWithTarget,
   VoteBomb,
   MoveToDropBomb,
+
   IsNotSafe,
   FindSafePlace,
   VoteSafePlace,
@@ -30,8 +37,8 @@ import AI from './ai';
 
 import { newChildObject } from '../../utils';
 
-const First = function(map, config) {
-  AI.apply(this, [map, config]);
+const First = function(map, config, lastResult) {
+  AI.apply(this, [map, config, lastResult]);
 };
 
 First.prototype = newChildObject(AI.prototype);
@@ -43,6 +50,7 @@ AI.prototype.buildTree = function() {
         name: 'pre-processing',
         children: [
           new SyncData(this),
+          new UpdateLastResult(this),
           new UpdateFlame(this),
           // need implement guest path of virus/human more precision. Currently, ignore Hazard from virus/human
           new UpdateVirus(this),
@@ -89,8 +97,23 @@ AI.prototype.buildTree = function() {
           }),
           new CalculateBombDelay(this),
           new FindBombCandidate(this),
-          new VoteBomb(this),
-          new MoveToDropBomb(this)
+          new Priority({
+            children: [
+              new Sequence({
+                children: [
+                  new TargetSuitableWithBomb(this),
+                  new VoteBombWithTarget(this),
+                  new MoveToDropBombWithTarget(this)
+                ]
+              }),
+              new Sequence({
+                children: [
+                  new VoteBomb(this),
+                  new MoveToDropBomb(this)
+                ]
+              })
+            ]
+          })
         ]
       }),
       new Sequence({

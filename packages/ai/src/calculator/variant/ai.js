@@ -12,7 +12,7 @@ import {
   getDirect
 } from './helper';
 
-const AI = function(map, config) {
+const AI = function(map, config, lastResult) {
   const tree = new BehaviorTree(null, {
     title: 'BTs of iVengers'
   });
@@ -24,8 +24,7 @@ const AI = function(map, config) {
   this.tree       = tree;
   this.config     = config;
   this.blackboard = blackboard;
-
-  console.log(this);
+  this.lastResult = lastResult;
 };
 
 AI.prototype.buildTree = function() {
@@ -171,7 +170,7 @@ AI.prototype.scoreForWalk = function(playerId, pos, grid) {
 };
 
 AI.prototype.timeToCrossACell = function(id) {
-  const { map_info: { players: { [id]: player } } } = this.map;
+  const { timestamp, map_info: { players: { [id]: player } } } = this.map;
   const { speed } = player;
 
   return 1000 * 55 / speed;
@@ -197,7 +196,9 @@ AI.prototype.tracePath = function(pos, grid) {
     node = parent;
   }
 
+  const { timestamp } = this.map;
   positions[0].visited = true;
+  positions[0].timestamp = timestamp;
 
   return {
     directs,

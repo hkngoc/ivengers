@@ -21,7 +21,7 @@ MoveToBonus.prototype.tick = function(tree) {
   const { position } = winner;
   const { directs, positions } = this.ref.tracePath(position, grid);
 
-  blackboard.set('result', directs, true);
+  blackboard.set('result', { directs, positions, winner }, true);
 
   return SUCCESS;
 };

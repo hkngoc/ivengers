@@ -12,19 +12,19 @@ const wait = (amount) => {
 
 const wrapper = async (...params) => {
   // console.log(JSON.stringify(params));
-  console.log(params);
+  // console.log(params);
 
   Logger.useDefaults();
   Logger.time('logic');
   const result = await new Promise((resolve) => {
-    const directions = new AI(...params).tick();
+    const r = new AI(...params).tick();
 
-    resolve(directions);
+    resolve(r);
   });
   Logger.timeEnd('logic');
 
   // just mock for currenly implement
-  await wait(170);
+  // await wait(170);
 
   return result;
 };

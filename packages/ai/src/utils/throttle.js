@@ -9,7 +9,7 @@ const throttle = (func, callback) => {
 
     // lock
     invoking = true;
-    result = await func.apply(thisArg, args)
+    result = await func.apply(thisArg, args);
     invoking = false;
 
     if (callback && typeof(callback) == 'function') {
@@ -43,6 +43,8 @@ const throttle = (func, callback) => {
 
     if (flag) {
       return invokeFunc(lastCallTime);
+    } else {
+      return undefined;
     }
   }
 

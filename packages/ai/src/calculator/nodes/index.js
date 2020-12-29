@@ -3,6 +3,7 @@ import UpdateFlame from './UpdateFlame';
 import UpdateVirus from './UpdateVirus';
 import UpdateHuman from './UpdateHuman';
 import UpdateGrid from './UpdateGrid';
+import UpdateLastResult from './UpdateLastResult';
 
 import FindBonusCandidate from './FindBonusCandidate';
 import NoBombLeft from './NoBombLeft';
@@ -12,6 +13,10 @@ import MoveToBonus from './MoveToBonus';
 
 import CalculateBombDelay from './CalculateBombDelay';
 import FindBombCandidate from './FindBombCandidate';
+import TargetSuitableWithBomb from './TargetSuitableWithBomb';
+import VoteBombWithTarget from './VoteBombWithTarget';
+import MoveToDropBombWithTarget from './MoveToDropBombWithTarget';
+
 import VoteBomb from './VoteBomb';
 import MoveToDropBomb from './MoveToDropBomb';
 
@@ -22,19 +27,27 @@ import MoveToSafe from './MoveToSafe';
 
 export {
   SyncData,
+
   UpdateFlame,
   UpdateVirus,
   UpdateHuman,
   UpdateGrid,
+  UpdateLastResult,
+
   FindBonusCandidate,
   NoBombLeft,
   VoteBonus,
   VoteBonusWithBombLeft,
   MoveToBonus,
+
   CalculateBombDelay,
   FindBombCandidate,
+  TargetSuitableWithBomb,
+  VoteBombWithTarget,
+  MoveToDropBombWithTarget,
   VoteBomb,
   MoveToDropBomb,
+
   IsNotSafe,
   FindSafePlace,
   VoteSafePlace,

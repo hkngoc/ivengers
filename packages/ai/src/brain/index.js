@@ -3,7 +3,9 @@ import { throttle } from '../utils';
 
 const Brain = function(config, callback) {
   this.config = config;
-  this.throttled = throttle(ai, callback);
+  this.callback = callback;
+  this.throttled = throttle(ai, this.onCalculated.bind(this));
+  this.lastResult = null;
 };
 
 Brain.prototype.ticktack = function(map) {
@@ -11,7 +13,18 @@ Brain.prototype.ticktack = function(map) {
   // const { tag } = map;
 
   // invoke ai func with some data from preprocessing
-  this.throttled.apply(this, [map, this.config]);
+  this.throttled.apply(this, [map, this.config, this.lastResult]);
+};
+
+Brain.prototype.onCalculated = function(result) {
+  this.lastResult = result;
+
+  const { watch } = result;
+  // console.log(result, watch);
+
+  if (this.callback && !watch) {
+    this.callback(result);
+  }
 };
 
 export default Brain;
