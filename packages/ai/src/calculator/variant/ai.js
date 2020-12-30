@@ -92,10 +92,8 @@ AI.prototype.drawBombFlames = function(bomb, grid, fn, which) {
 
       // update grid at near
       profit = fn.apply(this, [playerId, near, grid, remainTime, index, profit, which]);
-
       directs[direct] = near;
 
-      // need implement more
       const stop = grid.wouldStopFlameAt(near.x, near.y, remainTime);
       if (stop) {
         directs = _.omit(directs, direct);
@@ -150,7 +148,7 @@ AI.prototype.scoreForBombing = function(playerId, pos, grid, remainTime) {
   }
 
   // need implement with remainTime for better. Other bomb with smaller remain will explore that box early
-  if (node.value == 2) {
+  if (node.value == 2 && grid.wouldStopFlameAt(x, y, remainTime)) {
     score.box = 1;
   }
 

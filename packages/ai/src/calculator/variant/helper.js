@@ -162,8 +162,26 @@ CustomGrid.prototype.getNeighbors = function(node, diagonalMovement, playerNumbe
   return neighbors;
 };
 
-CustomGrid.prototype.wouldStopFlameAt = function(x, y) {
-  return this.isInside(x, y) && ([1, 2].includes(this.nodes[y][x].value));
+CustomGrid.prototype.wouldStopFlameAt = function(x, y, remainTime) {
+  if (this.isInside(x, y)) {
+    if (this.nodes[y][x].value == 1) {
+      return true;
+    } else if (this.nodes[y][x].value == 2) {
+      const { flameRemain = [] } = this.nodes[y][x];
+      for (const remain of flameRemain) {
+        if (remain < remainTime) {
+          // exist flame of other bomb with smaller remainTime
+          return false;
+        }
+      }
+
+      return true;
+    } else {
+      return false;
+    }
+  } else {
+    return true;
+  }
 };
 
 CustomGrid.prototype.wouldStopHumanAt = function(x, y) {
