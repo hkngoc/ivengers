@@ -4,6 +4,7 @@ import {
 } from 'behavior3js';
 
 import _ from 'lodash';
+import moment from 'moment';
 
 import { newChildObject } from '../../utils';
 import MyBaseNode from './MyBaseNode';
@@ -23,7 +24,7 @@ UpdateLastResult.prototype.tick = function(tree) {
 
   const { positions } = lastResult;
   const player = this.ref.getMyPlayer();
-  const { currentPosition: { col, row } } = player;
+  const { id, currentPosition: { col, row } } = player;
 
   const index = _.findLastIndex(positions, pos => pos.visited);
   const current = positions[index];
@@ -31,6 +32,12 @@ UpdateLastResult.prototype.tick = function(tree) {
 
   if (current.x == col && current.y == row) {
     // same as last event
+    const tpc = this.ref.timeToCrossACell(id);
+    const diff = this.diffTimestamp(current.timestamp, timestamp);
+    if (diff > 1.5 * tpc) {
+      // long time no move, remove target
+      this.ref.lastResult = null;
+    }
   } else {
     if (next.x == col && next.y == row) {
       // new pos, collect visited
@@ -50,6 +57,13 @@ UpdateLastResult.prototype.tick = function(tree) {
   console.log(this.ref.lastResult);
 
   return SUCCESS;
+};
+
+UpdateLastResult.prototype.diffTimestamp = function(t1, t2) {
+  const m1 = moment(t1);
+  const m2 = moment(t2);
+
+  return m2.diff(m1);
 };
 
 export default UpdateLastResult;
