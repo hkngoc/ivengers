@@ -22,6 +22,9 @@ import MoveToDropBomb from './MoveToDropBomb';
 
 import IsNotSafe from './IsNotSafe';
 import FindSafePlace from './FindSafePlace';
+import TargetSuitableWithSafe from './TargetSuitableWithSafe'
+import VoteSafePlaceWithTarget from './VoteSafePlaceWithTarget'
+import MoveToSafeWithTarget from './MoveToSafeWithTarget'
 import VoteSafePlace from './VoteSafePlace';
 import MoveToSafe from './MoveToSafe';
 
@@ -50,6 +53,9 @@ export {
 
   IsNotSafe,
   FindSafePlace,
+  TargetSuitableWithSafe,
+  VoteSafePlaceWithTarget,
+  MoveToSafeWithTarget,
   VoteSafePlace,
   MoveToSafe
 }

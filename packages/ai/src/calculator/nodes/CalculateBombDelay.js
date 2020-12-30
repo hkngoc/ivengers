@@ -24,7 +24,7 @@ CalculateBombDelay.prototype.tick = function(tree) {
 
   if (own.length > 0) {
     const max = (_.maxBy(own, 'remainTime')).remainTime;
-    remain = delay - max;
+    remain = delay - (2000 - max);
   }
 
   blackboard.set('bombRemain', remain, true);

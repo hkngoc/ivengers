@@ -181,6 +181,13 @@ CustomGrid.prototype.dropBombAt = function(x, y){
   }
 };
 
+CustomGrid.prototype.removeBombAt = function(x, y){
+  if (this.isInside(x, y)) {
+    this.nodes[y][x].value = 0;
+    this.nodes[y][x].walkable = true;
+  }
+};
+
 //===============================================================
 export {
   Direct,

@@ -19,7 +19,7 @@ UpdateFlame.prototype.tick = function(tree) {
     const { col, row } = bomb;
 
     grid.dropBombAt(col, row);
-    this.ref.drawBombFlames(bomb, grid, this.ref.updateFlameFunction);
+    this.ref.drawBombFlames(bomb, grid, this.ref.updateFlameFunction, 'flameRemain');
   }
 
   return SUCCESS;

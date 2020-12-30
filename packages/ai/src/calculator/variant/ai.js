@@ -69,7 +69,7 @@ AI.prototype.getDirectOf = function(direction) {
   return DirectOf[direction];
 };
 
-AI.prototype.drawBombFlames = function(bomb, grid, fn) {
+AI.prototype.drawBombFlames = function(bomb, grid, fn, which) {
   const { col, row, remainTime, power, index, playerId } = bomb;
 
   const pos = new Pos(col, row);
@@ -83,7 +83,7 @@ AI.prototype.drawBombFlames = function(bomb, grid, fn) {
   let flameSize = power;//boot bomb power
   // let score = 0;
 
-  let profit = fn.apply(this, [playerId, pos, grid, remainTime, index]);
+  let profit = fn.apply(this, [playerId, pos, grid, remainTime, index, {}, which]);
 
   while (flameSize > 0 && _.keys(directs).length > 0) {
     for (const direct in directs) {
@@ -91,10 +91,11 @@ AI.prototype.drawBombFlames = function(bomb, grid, fn) {
       const near = p.adj(direct);
 
       // update grid at near
-      profit = fn.apply(this, [playerId, near, grid, remainTime, index, profit]);
+      profit = fn.apply(this, [playerId, near, grid, remainTime, index, profit, which]);
 
       directs[direct] = near;
 
+      // need implement more
       const stop = grid.wouldStopFlameAt(near.x, near.y, remainTime);
       if (stop) {
         directs = _.omit(directs, direct);
@@ -125,6 +126,15 @@ AI.prototype.updateFlameFunction = function(playerId, pos, grid, remainTime, ind
   const score = this.scoreForBombing(playerId, pos, grid, remainTime);
 
   return this.mergeProfit(profit, score);
+};
+
+AI.prototype.reverseFlameFunction = function(playerId, pos, grid, remainTime, index, profit = {}, which = 'tempFlameRemain') {
+  const { x, y } = pos;
+
+  const node = grid.getNodeAt(x, y);
+  delete node[which];
+
+  return 0;
 };
 
 AI.prototype.scoreForBombing = function(playerId, pos, grid, remainTime) {
@@ -173,7 +183,7 @@ AI.prototype.timeToCrossACell = function(id) {
   const { timestamp, map_info: { players: { [id]: player } } } = this.map;
   const { speed } = player;
 
-  return 1000 * 55 / speed;
+  return 1000 * 35 / speed;
 };
 
 AI.prototype.tracePath = function(pos, grid) {

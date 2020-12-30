@@ -28,7 +28,7 @@ MoveToDropBomb.prototype.tick = function(tree) {
     return SUCCESS;
   } else {
     if (remain > 0) {
-      blackboard.set('result', { directs: 'x', positions: [] }, true);
+      // blackboard.set('result', { directs: 'x', positions: [] }, true);
 
       return SUCCESS;
     } else {

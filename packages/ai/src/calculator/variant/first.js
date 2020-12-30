@@ -29,6 +29,9 @@ import {
 
   IsNotSafe,
   FindSafePlace,
+  TargetSuitableWithSafe,
+  VoteSafePlaceWithTarget,
+  MoveToSafeWithTarget,
   VoteSafePlace,
   MoveToSafe,
 } from '../nodes';
@@ -126,8 +129,23 @@ AI.prototype.buildTree = function() {
               // dead or alive. implement case all place are not safe -> find best place in that context
             ]
           }),
-          new VoteSafePlace(this),
-          new MoveToSafe(this)
+          new Priority({
+            children: [
+              new Sequence({
+                children: [
+                  new TargetSuitableWithSafe(this),
+                  new VoteSafePlaceWithTarget(this),
+                  new MoveToSafeWithTarget(this)
+                ]
+              }),
+              new Sequence({
+                children: [
+                  new VoteSafePlace(this),
+                  new MoveToSafe(this)
+                ]
+              })
+            ]
+          }),
         ]
       })
     ]

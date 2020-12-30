@@ -93,7 +93,7 @@ FindBonusCandidate.prototype.scoreFn = function(node) {
 
 FindBonusCandidate.prototype.extremeFn = function(score, cost) {
   if (cost <= 0) {
-    cost = 1;
+    cost = 0.5;
   }
 
   if (cost > 1) {

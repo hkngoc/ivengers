@@ -47,6 +47,8 @@ UpdateLastResult.prototype.tick = function(tree) {
     }
   }
 
+  console.log(this.ref.lastResult);
+
   return SUCCESS;
 };
 

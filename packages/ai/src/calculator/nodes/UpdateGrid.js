@@ -26,7 +26,7 @@ UpdateGrid.prototype.tick = function(tree) {
 
   this.travelGrid(id, { x, y }, grid);
 
-  // console.log(grid);
+  console.log(grid);
 
   return SUCCESS;
 };
@@ -95,14 +95,16 @@ UpdateGrid.prototype.canPlayerWalk = function(playerId, node, cost, grid) {
   const tpc = this.ref.timeToCrossACell(playerId);
   const travelTime = tpc * cost;
 
-  const { flameRemain = [] } = node;
+  const { flameRemain = [], tempFlameRemain = [] } = node;
+  const remainTime = [ ...flameRemain, ...tempFlameRemain ];
 
-  if (flameRemain.length > 0) {
-    for (const remain of flameRemain) {
-      //  bomb time: flameRemain -> flameRemain + 400
-      // danger time: flameRemain - tpc/2 -> flameRemain + 400 + tpc/2
-      const left = flameRemain - tpc/2;
-      const right = flameRemain + 400 + tpc/2;
+  if (remainTime.length > 0) {
+    for (const remain of remainTime) {
+      //  bomb time: remain -> remain + 400
+      // danger time: remain - tpc/2 -> remain + 400 + tpc/2
+      const offset = 200;
+      const left = remain - tpc/2 - offset;
+      const right = remain + 400 + tpc/2 + offset;
 
       if (travelTime > left && travelTime < right) {
         return false;
@@ -118,11 +120,11 @@ UpdateGrid.prototype.tryPlaceBomb = function(playerId, pos, grid) {
   const power = this.ref.getPlayerPower(playerId);
 
   // clone grid
-  const tempGrid = _.cloneDeep(grid);
+  // const tempGrid = _.cloneDeep(grid);
 
   // place bomb at node to grid clone
   const { x, y } = pos;
-  tempGrid.dropBombAt(x, y);
+  grid.dropBombAt(x, y);
   //col, row, remainTime, power, index
   const tempBomb = {
     col: x,
@@ -134,11 +136,15 @@ UpdateGrid.prototype.tryPlaceBomb = function(playerId, pos, grid) {
   };
 
   // calculate score of explore and kill enemy...
-  const profit = this.ref.drawBombFlames(tempBomb, tempGrid, this.ref.updateFlameFunction);
+  const profit = this.ref.drawBombFlames(tempBomb, grid, this.ref.updateFlameFunction, 'tempFlameRemain');
 
   // check where can find safe place/path
-  const safe = this.findSafePlace(playerId, pos, tempGrid);
+  const safe = this.findSafePlace(playerId, pos, grid);
   profit.safe = safe;
+
+  // reverse state
+  grid.removeBombAt(x, y);
+  this.ref.drawBombFlames(tempBomb, grid, this.ref.reverseFlameFunction, 'tempFlameRemain');
 
   return profit;
 };

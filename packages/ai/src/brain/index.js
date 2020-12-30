@@ -19,6 +19,10 @@ Brain.prototype.ticktack = function(map) {
 Brain.prototype.onCalculated = function(result) {
   this.lastResult = result;
 
+  if (!result) {
+    return;
+  }
+
   const { watch } = result;
   // console.log(result, watch);
 
