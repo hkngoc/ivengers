@@ -60,15 +60,16 @@ UpdateGrid.prototype.travelGrid = function(playerId, pos, grid) {
 
     for (const neighbor of neighbors) {
       // really walkable under bomb flame remain
-      const walkable = this.canPlayerWalk(playerId, neighbor, nextTravelCost, grid);
+      const walkable = this.canPlayerWalk(playerId, neighbor, grid, nextTravelCost, 0);
       if (neighbor.closed || !walkable) {
         continue;
       }
 
       const scoreProfit = this.ref.scoreForWalk(playerId, neighbor, grid);
+      const safeProfit = this.ref.safeScoreForWalk(node, neighbor);
 
       // collect gift bonus on this path, it make better path
-      const adder = 1 - this.getProfitAdder(bombProfit, scoreProfit);
+      const adder = 1 - this.getProfitAdder(bombProfit, scoreProfit) - safeProfit;
       const ng = node.f + adder;
 
       if (!neighbor.opened || ng < neighbor.g) {
@@ -91,20 +92,31 @@ UpdateGrid.prototype.travelGrid = function(playerId, pos, grid) {
   }
 };
 
-UpdateGrid.prototype.canPlayerWalk = function(playerId, node, cost, grid) {
+UpdateGrid.prototype.canPlayerWalk = function(playerId, node, grid, cost, preCost = 0) {
   const tpc = this.ref.timeToCrossACell(playerId);
   const travelTime = tpc * cost;
 
   const { flameRemain = [], tempFlameRemain = [] } = node;
-  const remainTime = [ ...flameRemain, ...tempFlameRemain ];
+  const remainTime = [
+    ..._.map(flameRemain, remain => ({ remain, preCost })),
+    ..._.map(tempFlameRemain, remain => ({ remain, preCost: 0 }))
+  ];
 
   if (remainTime.length > 0) {
-    for (const remain of remainTime) {
+    for (const flame of remainTime) {
+      const { remain, preCost } = flame;
+
       //  bomb time: remain -> remain + 400
       // danger time: remain - tpc/2 -> remain + 400 + tpc/2
       const offset = 200;
-      const left = remain - tpc/2 - offset;
-      const right = remain + 400 + tpc/2 + offset;
+      const remainOffet = tpc * preCost;
+
+      // need so much more thinking about that formula about range time of flame effect
+      // currenly, I approve that with:
+      // flame time = 400ms
+      // offset = 200
+      const left = remain - tpc/2 - offset - remainOffet;
+      const right = remain + 400 - remainOffet + tpc/2 + offset;
 
       if (travelTime > left && travelTime < right) {
         return false;
@@ -118,9 +130,6 @@ UpdateGrid.prototype.canPlayerWalk = function(playerId, node, cost, grid) {
 UpdateGrid.prototype.tryPlaceBomb = function(playerId, pos, grid) {
   const tpc = this.ref.timeToCrossACell(playerId);
   const power = this.ref.getPlayerPower(playerId);
-
-  // clone grid
-  // const tempGrid = _.cloneDeep(grid);
 
   // place bomb at node to grid clone
   const { x, y } = pos;
@@ -152,7 +161,7 @@ UpdateGrid.prototype.tryPlaceBomb = function(playerId, pos, grid) {
 UpdateGrid.prototype.findSafePlace = function(playerId, pos, grid) {
   const playerNumber = this.ref.getPlayerNumber(playerId);
 
-  const { x, y } = pos;
+  const { x, y, travelCost: preCost } = pos;
   const startNode = grid.getNodeAt(x, y);
   startNode.safeOpened = true;
   startNode.safeTravelCost = 0;
@@ -176,7 +185,7 @@ UpdateGrid.prototype.findSafePlace = function(playerId, pos, grid) {
         continue;
       }
 
-      const walkable = this.canPlayerWalk(playerId, neighbor, nextTravelCost, grid);
+      const walkable = this.canPlayerWalk(playerId, neighbor, grid, nextTravelCost, preCost);
       if (walkable) {
         openList.push(neighbor);
         neighbor.safeOpened = true;

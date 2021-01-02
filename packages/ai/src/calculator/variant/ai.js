@@ -177,11 +177,28 @@ AI.prototype.scoreForWalk = function(playerId, pos, grid) {
   return score;
 };
 
+AI.prototype.safeScoreForWalk = function(node, neighbor) {
+  const { flameRemain: f1 = [], tempFlameRemain: tf1 = [] } = node;
+  const max1 = _.max([...f1, ...tf1]) || 0;
+
+  const { flameRemain: f2 = [], tempFlameRemain: tf2 = [] } = neighbor;
+  const max2 = _.max([...f2, ...tf2]) || 0;
+
+  if (max2 < max1) {
+    return 0.1;
+  }
+
+  return 0;
+};
+
 AI.prototype.timeToCrossACell = function(id) {
   const { timestamp, map_info: { players: { [id]: player } } } = this.map;
   const { speed } = player;
 
-  return 1000 * 35 / speed;
+  // need Q&A and confirm from BTC
+  // current by hack of source code
+  // I found that the value is 35 in traning mode and 55 in fighting mode
+  return 1000 * 55 / speed;
 };
 
 AI.prototype.tracePath = function(pos, grid) {
@@ -214,6 +231,44 @@ AI.prototype.tracePath = function(pos, grid) {
   };
 };
 
+AI.prototype.scoreFn = function(node) {
+  const {
+    travelCost,
+    scoreProfit = {},
+    bombProfit = {}
+  } = node;
+
+  const { box = 0, enemy = 0, safe } = bombProfit;
+  const { gifts = [], spoils = [] } = scoreProfit;
+
+  let score = 0;
+  if (safe) {
+    score = score + box + enemy;
+  }
+  score = score + 1 * gifts.length;
+  score = score + 1 * spoils.length;
+
+  return score;
+};
+
+AI.prototype.extremeFn = function(score, cost) {
+  if (cost <= 0) {
+    cost = 0.5;
+  }
+
+  if (cost > 1) {
+    cost = cost - 0.5;
+  }
+
+  score = 1.0 * score / cost;
+  // round by 0.1
+  score = Math.round((1.0 * score) / 0.1) * 0.1;
+  if (score == 0) {
+    score = 0.1;
+  }
+
+  return score;
+};
 //===============================================================
 /*invoking here*/
 AI.prototype.tick = function() {

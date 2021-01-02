@@ -20,7 +20,7 @@ VoteBonus.prototype.tick = function(tree) {
   const candidates = blackboard.get('bonusCandidates', true);
   const tpc = this.ref.timeToCrossACell(myId);
 
-  const ordered = _.orderBy(candidates, ['extreme', 'score'], ['desc', 'desc']);
+  const ordered = _.orderBy(candidates, ['extreme', 'score', 'cost'], ['desc', 'desc', 'asc']);
   const winner =  _.first(ordered);
 
   blackboard.set('bonusWinner', winner, true);

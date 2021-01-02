@@ -27,7 +27,7 @@ VoteBonusWithBombLeft.prototype.tick = function(tree) {
 
       return cost * tpc >= remain;
     })
-    .orderBy(['extreme', 'score'], ['desc', 'desc'])
+    .orderBy(['extreme', 'score', 'cost'], ['desc', 'desc', 'asc'])
     .value();
 
   if (ordered.length > 0) {

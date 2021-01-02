@@ -20,7 +20,7 @@ VoteBomb.prototype.tick = function(tree) {
   const remain = blackboard.get('bombRemain', true);
   const candidates = blackboard.get('bombCandidates', true);
 
-  const ordered = _.orderBy(candidates, ['extreme', 'score'], ['desc', 'desc']);
+  const ordered = _.orderBy(candidates, ['extreme', 'score', 'cost'], ['desc', 'desc', 'asc']);
   const winner =  _.first(ordered);
 
   blackboard.set('bombWinner', winner, true);

@@ -17,7 +17,7 @@ VoteSafePlaceWithTarget.prototype.tick = function(tree) {
 
   const candidates = blackboard.get('safeCandidates', true);
 
-  const ordered = _.orderBy(candidates, ['extreme', 'score'], ['desc', 'desc']);
+  const ordered = _.orderBy(candidates, ['extreme', 'score', 'cost'], ['desc', 'desc', 'asc']);
   const { winner: { position } } = lastResult;
 
   const index = _.findIndex(ordered, candidate => candidate.x == position.x && candidate.y == position.y);
