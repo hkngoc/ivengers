@@ -1,4 +1,5 @@
-import { Fragment, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
+
 import Gamepad from 'react-gamepad';
 import throttle from 'lodash.throttle';
 
@@ -32,11 +33,17 @@ const KEYS_MAP_GAMEPAD = {
 };
 
 const Main = () => {
-  const [ botStatus, setBotStatus ] = useState('idle');
-  const [ gamepadStatus, setGamePadStatus ] = useState('idle');
+  const [ status, setStatus ] = useState({
+    green:'idle',
+    gamepad: 'idle',
+    red: 'idle'
+  });
+  const [ ai, setAi ] = useState({
+    green: null,
+    gamepad: null,
+    red: null
+  });
 
-  const [ machine, setMachine ] = useState(null);
-  const [ gamepad, setGamepad ] = useState(null);
   const [ keyStatus, setKeyStatus ] = useState({
     directionUp: false,
     directionDown: false,
@@ -67,8 +74,8 @@ const Main = () => {
       [k]: true
     });
 
-    if (gamepad) {
-      gamepad.drive(KEYS_MAP_COMMAND[lower]);
+    if (ai["gamepad"]) {
+      ai["gamepad"].drive(KEYS_MAP_COMMAND[lower]);
     }
   }
 
@@ -107,42 +114,26 @@ const Main = () => {
     }
   });
 
-  const handleConnect = async (config) => {
+  const handleConnect = async (who, config) => {
+    const Classes = ["green", "red"].includes(who) ? Machine : GamePad;
+
     try {
-      const m = new Machine(config);
+      const m = new Classes(config);
       await m.connect();
-      setMachine(m);
-      setBotStatus('connected');
+      setAi({ ...ai, [who]: m });
+      setStatus({ ...status, [who]: 'connected' });
     } catch (e) {
       console.error(e);
     }
   }
 
-  const handleDisconnect = () => {
+  const handleDisconnect = (who) => {
+    const machine = ai[who];
     if (machine) {
       machine.disconnect();
     }
-    setMachine(null);
-    setBotStatus('idle');
-  }
-
-  const handleGamePadConnect = async (config) => {
-    try {
-      const m = new GamePad(config);
-      await m.connect();
-      setGamepad(m);
-      setGamePadStatus('connected');
-    } catch (e) {
-      console.error(e);
-    }
-  }
-
-  const handleGamePadDisconnect = () => {
-    if (gamepad) {
-      gamepad.disconnect();
-    }
-    setGamepad(null);
-    setGamePadStatus('idle');
+    setAi({ ...ai, [who]: null });
+    setStatus({ ...status, [who]: 'idle' });
   }
 
   const onGamePad = (e) => {
@@ -151,27 +142,31 @@ const Main = () => {
   }
 
   return (
-    <Fragment>
-      <div className="d-flex justify-content-around">
+    <div className="d-flex flex-wrap justify-content-center">
+      <Query
+        onConnect={handleConnect.bind(this, "green")}
+        onDisconnect={handleDisconnect.bind(this, "green")}
+        status={status["green"]}
+      />
+      <Gamepad
+        onButtonChange={onGamePad}
+        onAxisChange={onGamePad}
+      >
         <Query
-          onConnect={handleConnect}
-          onDisconnect={handleDisconnect}
-          status={botStatus}
+          onConnect={handleConnect.bind(this, "gamepad")}
+          onDisconnect={handleDisconnect.bind(this, "gamepad")}
+          status={status["gamepad"]}
+          keyStatus={keyStatus}
+          gamepad={true}
         />
-        <Gamepad
-          onButtonChange={onGamePad}
-          onAxisChange={onGamePad}
-        >
-          <Query
-            onConnect={handleGamePadConnect}
-            onDisconnect={handleGamePadDisconnect}
-            status={gamepadStatus}
-            keyStatus={keyStatus}
-            gamepad={true}
-          />
-        </Gamepad>
-      </div>
-    </Fragment>
+      </Gamepad>
+      <Query
+        onConnect={handleConnect.bind(this, "red")}
+        onDisconnect={handleDisconnect.bind(this, "red")}
+        status={status["red"]}
+        playerRed={true}
+      />
+    </div>
   );
 }
 

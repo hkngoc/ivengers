@@ -2,14 +2,16 @@ import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import {
   Form,
-  Button
+  Button,
+  Col
 } from 'react-bootstrap';
 import BootstrapSwitchButton from 'bootstrap-switch-button-react';
 
 import Blocking from './Blocking';
 
-import avatar from './assets/rocket_raccoon.svg';
-import gamepadIcon from './assets/gamepad-icon1.png';
+import avatarGreen from './assets/hulk.svg';
+import avatarRed from './assets/ironman.svg';
+// import gamepadIcon from './assets/gamepad-icon1.png';
 import GamePadSvg from './GamePadSvg';
 
 const HOSTS = process.env.REACT_APP_HOSTS.split(",");
@@ -25,9 +27,9 @@ const TEAMS = process.env.REACT_APP_TEAMS.split(";")
   });
 
 const Query = (props) => {
-  const { onConnect, onDisconnect, status, gamepad, keyStatus } = props;
+  const { onConnect, onDisconnect, status, gamepad, keyStatus, playerRed } = props;
 
-  const [ player, setPlayer ] = useState(gamepad);
+  const [ player, setPlayer ] = useState(gamepad || playerRed);
   const [ disablePlayer, setDisablePlayer ] = useState(false);
 
   const { register, handleSubmit } = useForm();
@@ -58,15 +60,19 @@ const Query = (props) => {
   }
 
   return (
-    <div id="main" className="p-4 mt-3 col-md-4">
-      <div className="py-2">
+    <Col
+      className="query p-4 my-3 mx-5"
+      xs={6}
+      md={2}
+    >
+      <div className="py-3">
         {
           gamepad ? (
             <GamePadSvg {...keyStatus}/>
           ) : (
             <img
               className="d-flex mx-auto w-100 avatar"
-              src={gamepad ? gamepadIcon : avatar}
+              src={playerRed ? avatarRed : avatarGreen}
               alt="avatar"
             />
           )
@@ -136,7 +142,7 @@ const Query = (props) => {
           </Button>
         </Form>
       </div>
-    </div>
+    </Col>
   );
 }
 

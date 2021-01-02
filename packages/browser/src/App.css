@@ -21,7 +21,7 @@ body {
   justify-content: center;
 }
 
-#main {
+.query {
   background-color: rgba(225, 225, 225, 0.2);
 }
 
@@ -30,7 +30,7 @@ body {
 }
 
 .avatar {
-  min-width: 150px;
+  min-width: 80px;
 }
 
 .logo {
@@ -72,5 +72,5 @@ form > *:not(:last-child) {
 
 svg {
   width: 100%;
-  min-width: 150px;
+  min-width: 80px;
 }
