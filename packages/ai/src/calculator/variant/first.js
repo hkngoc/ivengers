@@ -27,6 +27,9 @@ import {
   VoteBomb,
   MoveToDropBomb,
 
+  SequenceAlwaysSuccess,
+  CleanGrid,
+  IsBombPrefix,
   IsNotSafe,
   FindSafePlace,
   TargetSuitableWithSafe,
@@ -122,10 +125,17 @@ AI.prototype.buildTree = function() {
       new Sequence({
         name: 'Safe',
         children: [
+          new SequenceAlwaysSuccess({
+            children: [
+              new IsBombPrefix(this),
+              new CleanGrid(this),
+              new UpdateGrid(this),
+            ]
+          }),
           new IsNotSafe(this),
           new Priority({
             children: [
-              new FindSafePlace(this) // find really safe place
+              new FindSafePlace(this) // find fully safe place
               // dead or alive. implement case all place are not safe -> find best place in that context
             ]
           }),

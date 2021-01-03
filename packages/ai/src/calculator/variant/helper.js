@@ -114,7 +114,7 @@ CustomGrid.prototype._buildNodes = function(width, height, matrix) {
   return nodes;
 };
 
-Grid.prototype.isWalkableAt = function(x, y, playerNumber) {
+CustomGrid.prototype.isWalkableAt = function(x, y, playerNumber) {
     return this.isInside(x, y) && (this.nodes[y][x].walkable || this.nodes[y][x].value == playerNumber);
 };
 

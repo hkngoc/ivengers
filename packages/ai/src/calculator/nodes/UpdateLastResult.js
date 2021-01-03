@@ -34,7 +34,7 @@ UpdateLastResult.prototype.tick = function(tree) {
     // same as last event
     const tpc = this.ref.timeToCrossACell(id);
     const diff = this.diffTimestamp(current.timestamp, timestamp);
-    if (diff > 1.5 * tpc) {
+    if (diff > 1.1 * tpc + 50) {
       // long time no move, remove target
       this.ref.lastResult = null;
     }

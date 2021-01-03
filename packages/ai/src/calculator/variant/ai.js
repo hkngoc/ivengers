@@ -53,6 +53,13 @@ AI.prototype.getPlayerPower = function(id) {
   return power;
 };
 
+AI.prototype.playerPassiveNumber = function(id) {
+  const { map_info: { players: { [id]: player } } } = this.map;
+  const { pill = 0, pillUsed = 0 } = player;
+
+  return pill;
+};
+
 AI.prototype.getPlayer = function(id) {
   const { map_info: { players: { [id]: player } } } = this.map;
 
@@ -147,7 +154,6 @@ AI.prototype.scoreForBombing = function(playerId, pos, grid, remainTime) {
     score.enemy = 1;
   }
 
-  // need implement with remainTime for better. Other bomb with smaller remain will explore that box early
   if (node.value == 2 && grid.wouldStopFlameAt(x, y, remainTime)) {
     score.box = 1;
   }
@@ -178,22 +184,29 @@ AI.prototype.scoreForWalk = function(playerId, pos, grid) {
 };
 
 AI.prototype.safeScoreForWalk = function(node, neighbor) {
-  const { flameRemain: f1 = [], tempFlameRemain: tf1 = [] } = node;
-  const max1 = _.max([...f1, ...tf1]) || 0;
+  const { flameRemain: f1 = [] } = node;
+  const max1 = _(f1).maxBy() || 0;
 
-  const { flameRemain: f2 = [], tempFlameRemain: tf2 = [] } = neighbor;
-  const max2 = _.max([...f2, ...tf2]) || 0;
+  const { flameRemain: f2 = [] } = neighbor;
+  const max2 = _(f2).maxBy() || 0;
 
   if (max2 < max1) {
-    return 0.1;
+    return 1;
   }
 
   return 0;
 };
 
 AI.prototype.timeToCrossACell = function(id) {
-  const { timestamp, map_info: { players: { [id]: player } } } = this.map;
-  const { speed } = player;
+  const { timestamp, map_info: { virusSpeed, humanSpeed, players } } = this.map;
+
+  if (id == 'human') {
+    var speed = humanSpeed;
+  } else if (id == 'virus') {
+    speed = virusSpeed;
+  } else {
+    speed = players[id].speed;
+  }
 
   // need Q&A and confirm from BTC
   // current by hack of source code
@@ -242,9 +255,11 @@ AI.prototype.scoreFn = function(node) {
   const { gifts = [], spoils = [] } = scoreProfit;
 
   let score = 0;
+
   if (safe) {
-    score = score + box + enemy;
+    score = score + 1 * box +  1 * enemy;
   }
+
   score = score + 1 * gifts.length;
   score = score + 1 * spoils.length;
 
@@ -253,7 +268,7 @@ AI.prototype.scoreFn = function(node) {
 
 AI.prototype.extremeFn = function(score, cost) {
   if (cost <= 0) {
-    cost = 0.5;
+    cost = 0.7;
   }
 
   if (cost > 1) {

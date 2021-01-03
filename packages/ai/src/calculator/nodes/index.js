@@ -20,6 +20,8 @@ import MoveToDropBombWithTarget from './MoveToDropBombWithTarget';
 import VoteBomb from './VoteBomb';
 import MoveToDropBomb from './MoveToDropBomb';
 
+import CleanGrid from './CleanGrid';
+import IsBombPrefix from './IsBombPrefix';
 import IsNotSafe from './IsNotSafe';
 import FindSafePlace from './FindSafePlace';
 import TargetSuitableWithSafe from './TargetSuitableWithSafe'
@@ -28,7 +30,10 @@ import MoveToSafeWithTarget from './MoveToSafeWithTarget'
 import VoteSafePlace from './VoteSafePlace';
 import MoveToSafe from './MoveToSafe';
 
+import SequenceAlwaysSuccess from './SequenceAlwaysSuccess';
+
 export {
+  SequenceAlwaysSuccess,
   SyncData,
 
   UpdateFlame,
@@ -51,6 +56,8 @@ export {
   VoteBomb,
   MoveToDropBomb,
 
+  CleanGrid,
+  IsBombPrefix,
   IsNotSafe,
   FindSafePlace,
   TargetSuitableWithSafe,

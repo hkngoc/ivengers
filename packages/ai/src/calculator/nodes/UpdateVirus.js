@@ -17,12 +17,6 @@ UpdateVirus.prototype.tick = function(tree) {
   const { map_info: { viruses } } = map;
 
   for (const virus of viruses) {
-    const { alive } = virus;
-
-    if (!alive) {
-      continue;
-    }
-
     this.drawPath(virus, grid, this.updateFn);
   }
 
@@ -31,11 +25,13 @@ UpdateVirus.prototype.tick = function(tree) {
 
 UpdateVirus.prototype.drawPath = function(virus, grid, fn) {
   const { position, direction } = virus;
-  const { x, y } = position;
+  const { col, row } = position;
 
   let directs = {};
-  const pos = new Pos(x, y);
-  directs[this.ref.getDirectOf(direction)] = pos;
+  const pos = new Pos(col, row);
+  if (direction) {
+    directs[this.ref.getDirectOf(direction)] = pos;
+  }
 
   fn.apply(this, [pos, grid, 0]);
   let step = 1;
