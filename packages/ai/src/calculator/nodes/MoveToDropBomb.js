@@ -33,7 +33,7 @@ MoveToDropBomb.prototype.tick = function(tree) {
       return SUCCESS;
     } else {
       const player = this.ref.getMyPlayer();
-      const { power, playerId } = player;
+      const { power, id: playerId } = player;
       const { x, y } = position;
       const bomb = {
         col: x,
@@ -44,6 +44,7 @@ MoveToDropBomb.prototype.tick = function(tree) {
         remainTime: 2000
       };
       // dropBomb to current pos
+      this.ref.map.map_info.bombs.push(bomb);
       grid.dropBombAt(x, y);
       this.ref.drawBombFlames(bomb, grid, this.ref.updateFlameFunction);
       // attach b prefix to directs output of safe path

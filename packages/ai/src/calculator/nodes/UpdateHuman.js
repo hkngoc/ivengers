@@ -17,12 +17,6 @@ UpdateHuman.prototype.tick = function(tree) {
   const { map_info: { human } } = map;
 
   for (const h of human) {
-    const { alive } = h;
-
-    if (!alive) {
-      continue;
-    }
-
     this.drawPath(h, grid, this.updateFn);
   }
   return SUCCESS;
@@ -30,10 +24,10 @@ UpdateHuman.prototype.tick = function(tree) {
 
 UpdateHuman.prototype.drawPath = function(human, grid, fn) {
   const { position, direction, index, infected } = human;
-  const { x, y } = position;
+  const { col, row } = position;
 
   let directs = {};
-  const pos = new Pos(x, y);
+  const pos = new Pos(col, row);
   directs[this.ref.getDirectOf(direction)] = pos;
 
   fn.apply(this, [pos, grid, 0]);

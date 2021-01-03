@@ -66,7 +66,7 @@ FindBombCandidate.prototype.conditionFn = function(node) {
 
   const { box = 0, enemy = 0, safe } = bombProfit;
 
-  return travelCost >= 0 && safe && (box > 0); //  || enemy > 0, disable in current
+  return travelCost >= 0 && safe && (box > 0 || enemy > 0); //  || enemy > 0, disable in current
 };
 
 export default FindBombCandidate;

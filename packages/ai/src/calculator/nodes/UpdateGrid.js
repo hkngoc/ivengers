@@ -26,7 +26,7 @@ UpdateGrid.prototype.tick = function(tree) {
 
   this.travelGrid(id, { x, y }, grid);
 
-  console.log(grid);
+  // console.log(grid);
 
   return SUCCESS;
 };
@@ -59,8 +59,10 @@ UpdateGrid.prototype.travelGrid = function(playerId, pos, grid) {
     const neighbors = grid.getNeighbors(node, DiagonalMovement.Never, playerNumber);
 
     for (const neighbor of neighbors) {
+
       // really walkable under bomb flame remain
       const walkable = this.canPlayerWalk(playerId, neighbor, grid, nextTravelCost, 0);
+
       if (neighbor.closed || !walkable) {
         continue;
       }
@@ -69,7 +71,7 @@ UpdateGrid.prototype.travelGrid = function(playerId, pos, grid) {
       const safeProfit = this.ref.safeScoreForWalk(node, neighbor);
 
       // collect gift bonus on this path, it make better path
-      const adder = 1 - this.getProfitAdder(bombProfit, scoreProfit) - safeProfit;
+      const adder = 1 - this.getProfitAdder(bombProfit, scoreProfit, safeProfit);
       const ng = node.f + adder;
 
       if (!neighbor.opened || ng < neighbor.g) {
@@ -96,6 +98,9 @@ UpdateGrid.prototype.canPlayerWalk = function(playerId, node, grid, cost, preCos
   const tpc = this.ref.timeToCrossACell(playerId);
   const travelTime = tpc * cost;
 
+  let safe = true;
+
+  /* check travel time with flame */
   const { flameRemain = [], tempFlameRemain = [] } = node;
   const remainTime = [
     ..._.map(flameRemain, remain => ({ remain, preCost })),
@@ -119,12 +124,53 @@ UpdateGrid.prototype.canPlayerWalk = function(playerId, node, grid, cost, preCos
       const right = remain + 400 - remainOffet + tpc/2 + offset;
 
       if (travelTime > left && travelTime < right) {
-        return false;
+        safe = false;
+        break;
       }
     }
   }
 
-  return true;
+  if (!safe) {
+    return safe;
+  }
+
+  /* check travel time with virus, human infected */
+  const passive = this.ref.playerPassiveNumber(playerId);
+  const { virusTravel = [], humanTravel = [] } = node;
+  const htpc = this.ref.timeToCrossACell('human');
+  const vtpc = this.ref.timeToCrossACell('virus');
+
+  let count = 0;
+
+  for (const step of virusTravel) {
+    const left = vtpc * step - vtpc/2 - 200;
+    const right = vtpc * step + vtpc/2 + 200;
+
+    if (travelTime > left && travelTime < right) {
+      count++;
+    }
+  }
+
+  for (const human of humanTravel) {
+    const { step, infected } = human;
+
+    if (!infected) {
+      continue;
+    }
+
+    const left = htpc * step - htpc/2 - 200;
+    const right = htpc * step + htpc/2 + 200;
+
+    if (travelTime > left && travelTime < right) {
+      count++;
+    }
+  }
+
+  if (count > passive) {
+    safe = false;
+  }
+
+  return safe;
 };
 
 UpdateGrid.prototype.tryPlaceBomb = function(playerId, pos, grid) {
@@ -203,7 +249,7 @@ UpdateGrid.prototype.isSafePlace = function(node) {
   return flameRemain.length <= 0;
 };
 
-UpdateGrid.prototype.getProfitAdder = function(bomb, items) {
+UpdateGrid.prototype.getProfitAdder = function(bomb, items, safer) {
   const { box = 0, enemy = 0, safe } = bomb;
   const { gifts = [], spoils = [] } = items;
 
@@ -215,6 +261,7 @@ UpdateGrid.prototype.getProfitAdder = function(bomb, items) {
 
   score = score + gifts.length;
   score = score + spoils.length;
+  score = score + safer;
 
   return score / 10;
 };
