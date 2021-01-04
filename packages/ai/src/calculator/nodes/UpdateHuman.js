@@ -28,7 +28,9 @@ UpdateHuman.prototype.drawPath = function(human, grid, fn) {
 
   let directs = {};
   const pos = new Pos(col, row);
-  directs[this.ref.getDirectOf(direction)] = pos;
+  if (direction) {
+    directs[this.ref.getDirectOf(direction)] = pos;
+  }
 
   fn.apply(this, [pos, grid, 0]);
   let step = 1;

@@ -49,7 +49,7 @@ const First = function(map, config, lastResult) {
 
 First.prototype = newChildObject(AI.prototype);
 
-AI.prototype.buildTree = function() {
+First.prototype.buildTree = function() {
   return new Priority({
     children:[
       new Sequence({

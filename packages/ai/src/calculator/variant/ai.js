@@ -268,7 +268,7 @@ AI.prototype.scoreFn = function(node) {
 
 AI.prototype.extremeFn = function(score, cost) {
   if (cost <= 0) {
-    cost = 0.7;
+    cost = 1;
   }
 
   if (cost > 1) {

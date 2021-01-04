@@ -17,11 +17,12 @@ VoteBomb.prototype = newChildObject(MyBaseNode.prototype);
 VoteBomb.prototype.tick = function(tree) {
   const { blackboard } = this.ref;
 
-  const remain = blackboard.get('bombRemain', true);
   const candidates = blackboard.get('bombCandidates', true);
 
-  const ordered = _.orderBy(candidates, ['extreme', 'score', 'cost'], ['desc', 'desc', 'asc']);
-  const winner =  _.first(ordered);
+  const ordered = _.orderBy(candidates, ['extreme', 'score', 'diff', 'cost'], ['desc', 'desc', 'asc', 'asc']);
+  // need reject position can drop bomb but remain time so small, that more safer. Maybe implement in Find Candidate node.
+
+  const winner = _.first(ordered);
 
   blackboard.set('bombWinner', winner, true);
 

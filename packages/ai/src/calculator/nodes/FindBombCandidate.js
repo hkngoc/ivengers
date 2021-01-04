@@ -17,13 +17,17 @@ FindBombCandidate.prototype.tick = function(tree) {
     map: {
       map_info: {
         size: { cols, rows }
-      }
+      },
+      myId
     },
     grid,
     blackboard
   } = this.ref;
 
   const candidates = [];
+  const tpc = this.ref.timeToCrossACell(myId);
+  const remain = blackboard.get('bombRemain', true);
+  const milestone = remain > 0 ? parseInt(remain / tpc) : 0;
 
   for (let i = 0; i < rows; ++i) {
     for (let j = 0; j < cols; ++j) {
@@ -42,7 +46,8 @@ FindBombCandidate.prototype.tick = function(tree) {
           },
           score,
           extreme,
-          cost: travelCost
+          cost: travelCost,
+          diff: Math.abs(milestone - travelCost)
         });
       }
     }
@@ -66,7 +71,7 @@ FindBombCandidate.prototype.conditionFn = function(node) {
 
   const { box = 0, enemy = 0, safe } = bombProfit;
 
-  return travelCost >= 0 && safe && (box > 0 || enemy > 0); //  || enemy > 0, disable in current
+  return travelCost >= 0 && safe && (box > 0 || enemy > 0);
 };
 
 export default FindBombCandidate;
