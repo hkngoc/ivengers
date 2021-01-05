@@ -53,8 +53,8 @@ SyncData.prototype.tick = function(tree) {
 
   // map player sort Id
   const myId = this.ref.getPlayerSortId(playerId);
-  const { col: mCol, row: mRow } = players[myId].currentPosition;
-  map.map_info.map[mRow][mCol] = 9;
+  // const { col: mCol, row: mRow } = players[myId].currentPosition;
+  // map.map_info.map[mRow][mCol] = 9;
 
   const enemies = _(players)
     .keys()

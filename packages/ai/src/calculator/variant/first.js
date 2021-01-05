@@ -63,6 +63,7 @@ First.prototype.buildTree = function() {
           new UpdateHuman(this),
           // need implement update enemy grid in future
           new UpdateGrid(this),
+          new CalculateBombDelay(this),
           new Failer() // make sequence pre-process alway Fail
         ]
       }),
@@ -101,7 +102,6 @@ First.prototype.buildTree = function() {
           new Inverter({
             child: new IsNotSafe(this)
           }),
-          new CalculateBombDelay(this),
           new FindBombCandidate(this),
           new Priority({
             children: [

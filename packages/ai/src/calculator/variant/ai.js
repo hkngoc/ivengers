@@ -150,7 +150,10 @@ AI.prototype.scoreForBombing = function(playerId, pos, grid, remainTime) {
   const node = grid.getNodeAt(x, y);
 
   // kill enemy
-  if ([9, 10].includes(node.value) && node.value != playerNumber) {
+  const { myId, enemyId, map_info: { players } } = this.map;
+  const id = myId == playerId ? enemyId : myId;
+  const { [id]: { currentPosition: { col, row } } } = players;
+  if (x == col && y == row) {
     score.enemy = 1;
   }
 

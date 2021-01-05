@@ -23,7 +23,7 @@ MoveToDropBomb.prototype.tick = function(tree) {
   const { directs, positions } = this.ref.tracePath(position, grid);
 
   if (directs.length > 0) {
-    blackboard.set('result', { directs, positions, winner }, true);
+    blackboard.set('result', { directs, positions, winner, which: 'bomb' }, true);
 
     return SUCCESS;
   } else {

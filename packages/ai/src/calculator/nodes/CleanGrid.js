@@ -19,13 +19,13 @@ CleanGrid.prototype.tick = function(tree) {
     for (let j = 0; j < cols; j++) {
       const node = grid.getNodeAt(j, i);
 
-      delete node["f"];
-      delete node["travelCost"];
-      delete node["bombProfit"];
-      delete node["scoreProfit"];
-      delete node["opened"];
-      delete node["closed"];
-      delete node["parent"];
+      delete node['f'];
+      delete node['travelCost'];
+      delete node['bombProfit'];
+      delete node['scoreProfit'];
+      delete node['opened'];
+      delete node['closed'];
+      delete node['parent'];
     }
   }
 

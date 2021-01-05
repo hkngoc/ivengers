@@ -60,6 +60,7 @@ FindSafePlace.prototype.tick = function(tree) {
 FindSafePlace.prototype.conditionFn = function(node) {
   const { travelCost, flameRemain = [] } = node;
 
+  // flameRemain < 0 when move to that pos
   return travelCost >= 0 && flameRemain.length <= 0;
 };
 

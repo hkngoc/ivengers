@@ -7,7 +7,7 @@ const Machine = function(config) {
 };
 
 Machine.prototype.onHeart = function() {
-  // console.log("on heart");
+  // console.log('on heart');
   // flush throttled or request server event if no longer working
 };
 

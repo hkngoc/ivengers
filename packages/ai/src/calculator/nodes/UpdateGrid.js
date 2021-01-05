@@ -26,7 +26,7 @@ UpdateGrid.prototype.tick = function(tree) {
 
   this.travelGrid(id, { x, y }, grid);
 
-  // console.log(grid);
+  console.log(grid);
 
   return SUCCESS;
 };
