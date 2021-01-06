@@ -6,6 +6,9 @@ import UpdateGrid from './UpdateGrid';
 import UpdateLastResult from './UpdateLastResult';
 
 import FindBonusCandidate from './FindBonusCandidate';
+import TargetSuitableWithBonus from './TargetSuitableWithBonus';
+import VoteBonusWithTarget from './VoteBonusWithTarget';
+import MoveToBonusWithTarget from './MoveToBonusWithTarget';
 import NoBombLeft from './NoBombLeft';
 import VoteBonus from './VoteBonus';
 import VoteBonusWithBombLeft from './VoteBonusWithBombLeft';
@@ -43,6 +46,9 @@ export {
   UpdateLastResult,
 
   FindBonusCandidate,
+  TargetSuitableWithBonus,
+  VoteBonusWithTarget,
+  MoveToBonusWithTarget,
   NoBombLeft,
   VoteBonus,
   VoteBonusWithBombLeft,

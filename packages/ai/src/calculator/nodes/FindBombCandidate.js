@@ -27,15 +27,15 @@ FindBombCandidate.prototype.tick = function(tree) {
   const candidates = [];
   const tpc = this.ref.timeToCrossACell(myId);
   const remain = blackboard.get('bombRemain', true);
-  const milestone = remain > 0 ? parseInt(remain / tpc) : 0;
 
   for (let i = 0; i < rows; ++i) {
     for (let j = 0; j < cols; ++j) {
       const node = grid.getNodeAt(j, i);
+      const { travelCost } = node;
 
-      const accept = this.conditionFn.apply(this, [node]);
+      const accept = this.conditionFn.apply(this, [node, tpc]);
       if (accept) {
-        const { travelCost } = node;
+      // if (accept && remain <= travelCost * tpc) {
         const score = this.ref.scoreFn.apply(this, [node]);
         const extreme = this.ref.extremeFn.apply(this, [score, travelCost]);
 
@@ -47,7 +47,7 @@ FindBombCandidate.prototype.tick = function(tree) {
           score,
           extreme,
           cost: travelCost,
-          diff: Math.abs(milestone - travelCost)
+          diff: remain - travelCost * tpc
         });
       }
     }
@@ -62,16 +62,26 @@ FindBombCandidate.prototype.tick = function(tree) {
   }
 };
 
-FindBombCandidate.prototype.conditionFn = function(node) {
+FindBombCandidate.prototype.conditionFn = function(node, tpc) {
   const {
     travelCost,
     value,
-    bombProfit = {}
+    bombProfit = {},
+    flameRemain = []
   } = node;
 
   const { box = 0, enemy = 0, safe } = bombProfit;
 
-  return travelCost >= 0 && safe && (box > 0 || enemy > 0);
+  const hasBenefit = travelCost >= 0 && safe && (box > 0 || enemy > 0);
+  if (!hasBenefit) {
+    return false;
+  }
+
+  // for (const remain of flameRemain) {
+    
+  // }
+
+  return true;
 };
 
 export default FindBombCandidate;

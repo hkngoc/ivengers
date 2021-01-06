@@ -14,6 +14,9 @@ import {
   UpdateLastResult,
 
   FindBonusCandidate,
+  TargetSuitableWithBonus,
+  VoteBonusWithTarget,
+  MoveToBonusWithTarget,
   NoBombLeft,
   VoteBonus,
   VoteBonusWithBombLeft,
@@ -43,8 +46,8 @@ import AI from './ai';
 
 import { newChildObject } from '../../utils';
 
-const First = function(map, config, lastResult) {
-  AI.apply(this, [map, config, lastResult]);
+const First = function(...params) {
+  AI.apply(this, [...params]);
 };
 
 First.prototype = newChildObject(AI.prototype);
@@ -70,30 +73,46 @@ First.prototype.buildTree = function() {
       new Sequence({
         name: 'Eat',
         children: [
-          // new Inverter({
-          //   child: new IsNotSafe(this)
-          // }),
-          // // new NoBombLeft(this), // dump
-          // new CalculateBombDelay(this),
-          // new FindBonusCandidate(this),
-          // new Priority({
-          //   children: [
-          //     new Sequence({
-          //       children: [
-          //         new NoBombLeft(this),
-          //         new VoteBonus(this)
-          //       ]
-          //     }),
-          //     new Priority({
-          //       children: [
-          //         new VoteBonusWithBombLeft(this),
-          //         new VoteBonus(this)
-          //       ]
-          //     })
-          //   ]
-          // }),
-          // new MoveToBonus(this)
-          new Failer()
+          new Inverter({
+            child: new IsNotSafe(this)
+          }),
+          // new NoBombLeft(this), // dump
+          new FindBonusCandidate(this),
+          new Priority({
+            children: [
+              new Sequence({
+                name: 'keep old target if you can',
+                children: [
+                  new TargetSuitableWithBonus(this),
+                  new VoteBonusWithTarget(this),
+                  new MoveToBonusWithTarget(this)
+                ]
+              }),
+              new Sequence({
+                children: [
+                  new Priority({
+                    children: [
+                      new Sequence({
+                        name: 'find best bonus when no bomb left',
+                        children: [
+                          new NoBombLeft(this),
+                          new VoteBonus(this)
+                        ]
+                      }),
+                      new Sequence({
+                        name: 'find best bonus when has bomb left',
+                        children: [
+                          new VoteBonusWithBombLeft(this),
+                        ]
+                      }),
+                    ]
+                  }),
+                  new MoveToBonus(this)
+                ]
+              })
+            ]
+          }),
+          // new Failer()
         ]
       }),
       new Sequence({

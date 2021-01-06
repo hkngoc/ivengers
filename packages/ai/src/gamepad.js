@@ -19,7 +19,8 @@ GamePad.prototype.ticktack = function(data) {
 GamePad.prototype.connect = async function() {
   const socket = await connect(this.config, {
     onConnected: this.onConnected.bind(this),
-    ticktack: this.ticktack.bind(this),
+    onTicktack: this.ticktack.bind(this),
+    onPlayerDrive: this.onDrive.bind(this)
   });
   this.socket = socket;
 
@@ -38,6 +39,10 @@ GamePad.prototype.disconnect = function() {
   }
 
   this.socket = null;
+};
+
+GamePad.prototype.onDrive = function (data) {
+  console.log(...data);
 };
 
 export default GamePad;

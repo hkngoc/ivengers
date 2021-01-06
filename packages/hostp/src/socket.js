@@ -1,19 +1,17 @@
 import io from 'socket.io-client';
 
-const connect = (config, { ticktack, onConnected }) => {
+const connect = (config, { onTicktack, onPlayerDrive, onConnected }) => {
   return new Promise((resolve, reject) => {
     const { host } = config;
 
     const socket = io(host);
 
-    const handleTicktack = (...params) => {
-      if (ticktack && typeof (ticktack) == "function") {
-        ticktack(params);
-      }
+    const handler = (calback, ...params) => {
+      onTicktack.apply(this, [params]);
     };
 
     socket.on('connect', onConnected)
-    socket.on('ticktack player', handleTicktack);
+    socket.on('ticktack player', handler.bind(this, onTicktack));
 
     resolve(socket);
   });

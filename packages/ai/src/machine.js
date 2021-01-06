@@ -28,8 +28,9 @@ Machine.prototype.onConnected = function() {
 
 Machine.prototype.connect = async function() {
   const socket = await connect(this.config, {
-    ticktack: this.ticktack.bind(this),
-    onConnected: this.onConnected.bind(this)
+    onConnected: this.onConnected.bind(this),
+    onTicktack: this.ticktack.bind(this),
+    // onPlayerDrive: this.onDrive.bind(this)
   });
   this.socket = socket;
 
@@ -46,6 +47,10 @@ Machine.prototype.disconnect = function() {
 
 Machine.prototype.ticktack = function(data) {
   this.brain.ticktack.apply(this.brain, data);
+};
+
+Machine.prototype.onDrive = function(data) {
+  this.brain.onDrive.apply(this.brain, data);
 };
 
 export default Machine;

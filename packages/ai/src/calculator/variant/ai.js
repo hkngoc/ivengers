@@ -12,7 +12,7 @@ import {
   getDirect
 } from './helper';
 
-const AI = function(map, config, lastResult) {
+const AI = function(map, config, lastResult, enemyDrive) {
   const tree = new BehaviorTree(null, {
     title: 'BTs of iVengers'
   });
@@ -186,14 +186,22 @@ AI.prototype.scoreForWalk = function(playerId, pos, grid) {
   return score;
 };
 
-AI.prototype.safeScoreForWalk = function(node, neighbor) {
+AI.prototype.safeScoreForWalk = function(playerId, node, neighbor, travelCost) {
+  const tpc = this.timeToCrossACell(playerId);
+
   const { flameRemain: f1 = [] } = node;
-  const max1 = _(f1).maxBy() || 0;
+  const m1 = _(f1)
+    .map(f => f - tpc * (travelCost - 1))
+    .filter(f => f >= 0)
+    .minBy() || 2000;
 
   const { flameRemain: f2 = [] } = neighbor;
-  const max2 = _(f2).maxBy() || 0;
+  const m2 = _(f2)
+    .map(f => f - tpc * travelCost)
+    .filter(f => f >= 0)
+    .minBy() || 2000;
 
-  if (max2 < max1) {
+  if (m2 > m1) {
     return 1;
   }
 
@@ -201,7 +209,7 @@ AI.prototype.safeScoreForWalk = function(node, neighbor) {
 };
 
 AI.prototype.timeToCrossACell = function(id) {
-  const { timestamp, map_info: { virusSpeed, humanSpeed, players } } = this.map;
+  const { timestamp, myId, map_info: { virusSpeed, humanSpeed, players } } = this.map;
 
   if (id == 'human') {
     var speed = humanSpeed;
@@ -214,7 +222,98 @@ AI.prototype.timeToCrossACell = function(id) {
   // need Q&A and confirm from BTC
   // current by hack of source code
   // I found that the value is 35 in traning mode and 55 in fighting mode
-  return 1000 * 55 / speed;
+  const SIZE = myId.includes('player') ? 55 : 55;
+  return 1000 * SIZE / speed;
+};
+
+AI.prototype.acceptFlame = function(remain, cost, preCost, tpc, offset) {
+  const travelTime = tpc * cost;
+  const remainOffet = tpc * preCost;
+
+  // need so much more thinking about that formula about range time of flame effect
+  // currenly, I approve that with:
+  // flame time = 400ms
+  // offset = 200
+  const left = remain - tpc/2 - offset - remainOffet;
+  const right = remain + 400 - remainOffet + tpc/2 + offset;
+
+  if (travelTime > left && travelTime < right) {
+    return false;
+  } else {
+    return true;
+  }
+};
+
+AI.prototype.canPlayerWalkByFlame = function(playerId, node, neighbor, grid, cost, preCost = 0, offset = 200) {
+  const tpc = this.timeToCrossACell(playerId);
+  const travelTime = tpc * cost;
+
+  let safe = true;
+
+  /* check travel time with flame */
+  const { flameRemain = [], tempFlameRemain = [] } = neighbor;
+  const remainTime = [
+    ..._.map(flameRemain, remain => ({ remain, preCost })),
+    ..._.map(tempFlameRemain, remain => ({ remain, preCost: 0 }))
+  ];
+
+  if (remainTime.length > 0) {
+    for (const flame of remainTime) {
+      const { remain, preCost } = flame;
+
+      const accept = this.acceptFlame(remain, cost, preCost, tpc, offset);
+
+      if (!accept) {
+        safe = false;
+        break;
+      }
+    }
+  }
+
+  return safe;
+};
+
+AI.prototype.canPlayerWalkBySarsCov = function(playerId, node, neighbor, grid, cost, preCost = 0, offset = 200) {
+  const tpc = this.timeToCrossACell(playerId);
+  const travelTime = tpc * cost;
+
+  /* check travel time with virus, human infected */
+  const passive = this.playerPassiveNumber(playerId);
+  const { virusTravel = [], humanTravel = [] } = node;
+  const htpc = this.timeToCrossACell('human');
+  const vtpc = this.timeToCrossACell('virus');
+
+  let count = 0;
+
+  for (const step of virusTravel) {
+    const left = vtpc * step - vtpc/2 - 200;
+    const right = vtpc * step + vtpc/2 + 200;
+
+    if (travelTime > left && travelTime < right) {
+      count++;
+    }
+  }
+
+  for (const human of humanTravel) {
+    const { step, infected } = human;
+
+    if (!infected) {
+      continue;
+    }
+
+    const left = htpc * step - htpc/2 - 200;
+    const right = htpc * step + htpc/2 + 200;
+
+    if (travelTime > left && travelTime < right) {
+      count++;
+    }
+  }
+
+  if (count > passive) {
+    return false;
+  }
+
+  return true;
 };
 
 AI.prototype.tracePath = function(pos, grid) {
