@@ -17,7 +17,9 @@ const wrapper = async (...params) => {
   Logger.useDefaults();
   Logger.time('logic');
   const result = await new Promise((resolve) => {
-    const r = new AI(...params).tick();
+    let ai = new AI(...params)
+    const r = ai.tick();
+    ai = null;
 
     resolve(r);
   });

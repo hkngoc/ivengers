@@ -32,8 +32,8 @@ FindSafePlace.prototype.tick = function(tree) {
       const accept = this.conditionFn.apply(this, [node]);
       if (accept) {
         const { travelCost } = node;
-        const score = this.ref.scoreFn.apply(this, [node]);
-        const extreme = this.ref.extremeFn.apply(this, [score, travelCost]);
+        const score = this.ref.scoreFn.apply(this.ref, [node]);
+        const extreme = this.ref.extremeFn.apply(this.ref, [score, travelCost]);
 
         candidates.push({
           position: {

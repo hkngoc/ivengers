@@ -244,7 +244,7 @@ AI.prototype.acceptFlame = function(remain, cost, preCost, tpc, offset) {
   }
 };
 
-AI.prototype.canPlayerWalkByFlame = function(playerId, node, neighbor, grid, cost, preCost = 0, offset = 200) {
+AI.prototype.canPlayerWalkByFlame = function(playerId, node, neighbor, grid, cost, preCost = 0, offset = 200, includeTemp = true) {
   const tpc = this.timeToCrossACell(playerId);
   const travelTime = tpc * cost;
 
@@ -254,19 +254,19 @@ AI.prototype.canPlayerWalkByFlame = function(playerId, node, neighbor, grid, cos
   const { flameRemain = [], tempFlameRemain = [] } = neighbor;
   const remainTime = [
     ..._.map(flameRemain, remain => ({ remain, preCost })),
-    ..._.map(tempFlameRemain, remain => ({ remain, preCost: 0 }))
   ];
+  if (includeTemp) {
+    remainTime.push(..._.map(tempFlameRemain, remain => ({ remain, preCost: 0 })));
+  }
 
-  if (remainTime.length > 0) {
-    for (const flame of remainTime) {
-      const { remain, preCost } = flame;
+  for (const flame of remainTime) {
+    const { remain, preCost } = flame;
 
-      const accept = this.acceptFlame(remain, cost, preCost, tpc, offset);
+    const accept = this.acceptFlame(remain, cost, preCost, tpc, offset);
 
-      if (!accept) {
-        safe = false;
-        break;
-      }
+    if (!accept) {
+      safe = false;
+      break;
     }
   }
 
@@ -368,18 +368,25 @@ AI.prototype.scoreFn = function(node) {
   return score;
 };
 
+AI.prototype.roundScore = function(score) {
+  return +(Math.round(score + 'e+2') + 'e-2');
+};
+
 AI.prototype.extremeFn = function(score, cost) {
   if (cost <= 0) {
-    cost = 1;
+    cost = 0.8;
   }
 
   if (cost > 1) {
-    cost = cost - 0.5;
+    // cost = cost - 0.5;
+    cost = cost * 0.85;
+    cost = Math.sqrt(cost);
+    // cost = cost * 0.9;
   }
 
   score = 1.0 * score / cost;
   // round by 0.1
-  score = Math.round((1.0 * score) / 0.1) * 0.1;
+  score = this.roundScore(score);
   if (score == 0) {
     score = 0.1;
   }

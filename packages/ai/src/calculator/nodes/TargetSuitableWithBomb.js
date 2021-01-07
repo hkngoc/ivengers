@@ -23,6 +23,7 @@ TargetSuitableWithBomb.prototype.tick = function(tree) {
 
   const { blackboard } = this.ref;
   const candidates = blackboard.get('bombCandidates', true);
+
   const { winner: { position } } = lastResult;
 
   const index = _.findIndex(candidates, candidate => candidate.position.x == position.x && candidate.position.y == position.y);

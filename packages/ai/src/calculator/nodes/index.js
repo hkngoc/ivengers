@@ -5,6 +5,9 @@ import UpdateHuman from './UpdateHuman';
 import UpdateGrid from './UpdateGrid';
 import UpdateLastResult from './UpdateLastResult';
 
+import CalculateBombDelay from './CalculateBombDelay';
+import CalculateEmpty from './CalculateEmpty';
+
 import FindBonusCandidate from './FindBonusCandidate';
 import TargetSuitableWithBonus from './TargetSuitableWithBonus';
 import VoteBonusWithTarget from './VoteBonusWithTarget';
@@ -14,7 +17,6 @@ import VoteBonus from './VoteBonus';
 import VoteBonusWithBombLeft from './VoteBonusWithBombLeft';
 import MoveToBonus from './MoveToBonus';
 
-import CalculateBombDelay from './CalculateBombDelay';
 import FindBombCandidate from './FindBombCandidate';
 import TargetSuitableWithBomb from './TargetSuitableWithBomb';
 import VoteBombWithTarget from './VoteBombWithTarget';
@@ -45,6 +47,9 @@ export {
   UpdateGrid,
   UpdateLastResult,
 
+  CalculateEmpty,
+  CalculateBombDelay,
+
   FindBonusCandidate,
   TargetSuitableWithBonus,
   VoteBonusWithTarget,
@@ -54,7 +59,6 @@ export {
   VoteBonusWithBombLeft,
   MoveToBonus,
 
-  CalculateBombDelay,
   FindBombCandidate,
   TargetSuitableWithBomb,
   VoteBombWithTarget,

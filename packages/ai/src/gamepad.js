@@ -13,7 +13,7 @@ GamePad.prototype.onConnected = function() {
 };
 
 GamePad.prototype.ticktack = function(data) {
-  console.log(...data);
+  // console.log(...data);
 };
 
 GamePad.prototype.connect = async function() {

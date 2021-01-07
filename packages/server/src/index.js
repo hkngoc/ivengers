@@ -3,95 +3,195 @@ import { createServer } from 'http';
 import { Server } from 'socket.io'; // for version 3
 
 const sample = {
-  "id": 1209,
-  "timestamp": 1609662679978,
+  "id": 132,
+  "timestamp": 1610032774972,
   "map_info": {
     "size": {
       "cols": 26,
       "rows": 14
     },
-    "players": [{
-      "id": "player1-xxx",
-      "currentPosition": {
+    "players": {
+      "player1-xxx": {
+        "id": "player1-xxx",
+        "currentPosition": {
+          "col": 8,
+          "row": 4
+        },
+        "spawnBegin": {
+          "col": 1,
+          "row": 11
+        },
+        "score": 40,
+        "lives": 1000,
+        "speed": 230,
+        "power": 4,
+        "delay": 1200,
+        "box": 27,
+        "pill": 9,
+        "humanCured": 0,
+        "virus": 2,
+        "pillUsed": 2,
+        "humanSaved": 0,
+        "virusInfected": 0,
+        "humanInfected": 0,
+        "quarantine": 0
+      },
+      "player2-xxx": {
+        "id": "player2-xxx",
+        "currentPosition": {
+          "col": 24,
+          "row": 2
+        },
+        "spawnBegin": {
+          "col": 24,
+          "row": 2
+        },
+        "score": 0,
+        "lives": 1000,
+        "speed": 230,
+        "power": 1,
+        "delay": 1200,
+        "box": 0,
+        "pill": 0,
+        "humanCured": 0,
+        "virus": 0,
+        "pillUsed": 0,
+        "humanSaved": 0,
+        "virusInfected": 0,
+        "humanInfected": 0,
+        "quarantine": 0
+      }
+    },
+    "map": [
+      [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+      [1, 2, 1, 0, 0, 0, 0, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 2, 0, 1],
+      [1, 0, 2, 0, 0, 6, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 1],
+      [1, 2, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 2, 0, 1],
+      [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 1],
+      [1, 0, 1, 0, 1, 1, 0, 1, 2, 0, 2, 0, 1, 1, 2, 0, 0, 0, 0, 0, 2, 2, 2, 2, 2, 1],
+      [1, 0, 0, 0, 0, 0, 0, 2, 0, 0, 2, 1, 7, 7, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+      [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 1, 1, 2, 0, 0, 0, 2, 2, 0, 2, 0, 2, 0, 1],
+      [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 2, 0, 0, 2, 1, 1, 2, 1, 1, 1, 2, 1],
+      [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 2, 0, 1],
+      [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 1, 0, 0, 0, 0, 1, 2, 1],
+      [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 6, 0, 0, 2, 0, 1],
+      [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 1, 0, 0, 0, 0, 1, 2, 1],
+      [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+    ],
+    "bombs": [{
+      "row": 6,
+      "col": 8,
+      "remainTime": 360,
+      "playerId": "player1-xxx",
+      "power": 4,
+      "index": 0
+    }, {
+      "row": 4,
+      "col": 8,
+      "remainTime": 2000,
+      "playerId": "player1-xxx",
+      "power": 4,
+      "index": 1
+    }],
+    "spoils": [{
+      "row": 12,
+      "col": 5,
+      "spoil_type": 5
+    }, {
+      "row": 12,
+      "col": 2,
+      "spoil_type": 4
+    }, {
+      "row": 8,
+      "col": 1,
+      "spoil_type": 5
+    }, {
+      "row": 4,
+      "col": 7,
+      "spoil_type": 5
+    }, {
+      "row": 4,
+      "col": 2,
+      "spoil_type": 5
+    }, {
+      "row": 12,
+      "col": 3,
+      "spoil_type": 5
+    }, {
+      "row": 5,
+      "col": 1,
+      "spoil_type": 4
+    }, {
+      "row": 6,
+      "col": 5,
+      "spoil_type": 5
+    }, {
+      "row": 5,
+      "col": 6,
+      "spoil_type": 5
+    }, {
+      "row": 8,
+      "col": 10,
+      "spoil_type": 5
+    }],
+    "gameStatus": null,
+    "viruses": [{
+      "position": {
+        "col": 15,
+        "row": 6
+      },
+      "direction": 4,
+      "index": 0
+    }],
+    "human": [{
+      "position": {
+        "col": 18,
+        "row": 6
+      },
+      "infected": true,
+      "direction": 2,
+      "curedRemainTime": 0,
+      "index": 0
+    }, {
+      "position": {
+        "col": 9,
+        "row": 12
+      },
+      "infected": true,
+      "direction": 1,
+      "curedRemainTime": 0,
+      "index": 1
+    }, {
+      "position": {
+        "col": 18,
+        "row": 5
+      },
+      "infected": true,
+      "direction": 4,
+      "curedRemainTime": 0,
+      "index": 2
+    }, {
+      "position": {
         "col": 19,
         "row": 9
       },
-      "spawnBegin": {
-        "col": 1,
-        "row": 11
-      },
-      "score": 92,
-      "lives": 999,
-      "speed": 230,
-      "power": 26,
-      "delay": 1200,
-      "box": 46,
-      "pill": 28,
-      "humanCured": 4,
-      "virus": 2,
-      "pillUsed": 6,
-      "humanSaved": 1,
-      "virusInfected": 0,
-      "humanInfected": 0,
-      "quarantine": 0
-    }, {
-      "id": "player2-xxx",
-      "currentPosition": {
-        "col": 7,
-        "row": 9
-      },
-      "spawnBegin": {
-        "col": 24,
-        "row": 2
-      },
-      "score": 79,
-      "lives": 995,
-      "speed": 230,
-      "power": 6,
-      "delay": 1200,
-      "box": 40,
-      "pill": 27,
-      "humanCured": 0,
-      "virus": 3,
-      "pillUsed": 3,
-      "humanSaved": 3,
-      "virusInfected": 0,
-      "humanInfected": 0,
-      "quarantine": 0
-    }],
-    "map": [
-      [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-      [1, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-      [1, 0, 0, 0, 0, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-      [1, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-      [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-      [1, 0, 1, 0, 1, 1, 0, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-      [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 7, 7, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-      [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-      [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 1, 1, 0, 1],
-      [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-      [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1],
-      [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 0, 0, 0, 0, 1],
-      [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1],
-      [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
-    ],
-    "bombs": [],
-    "spoils": [],
-    "gameStatus": null,
-    "viruses": [],
-    "human": [{
-      "position": {
-        "col": 1,
-        "row": 2
-      },
       "infected": false,
-      "direction": 4,
-      "curedRemainTime": 0
+      "direction": 2,
+      "curedRemainTime": 0,
+      "index": 3
     }],
     "virusSpeed": 52.5,
-    "humanSpeed": 70
+    "humanSpeed": 70,
+    "gifts": []
   },
-  "tag": "update-data"
+  "tag": "bomb:setup",
+  "player_id": "player1-xxx",
+  "myId": "player1-xxx",
+  "enemyId": "player2-xxx",
+  "playerNumber": {
+    "player1-xxx": 9,
+    "player2-xxx": 10
+  }
 }
 
 

@@ -13,6 +13,9 @@ import {
   UpdateGrid,
   UpdateLastResult,
 
+  CalculateEmpty,
+  CalculateBombDelay,
+
   FindBonusCandidate,
   TargetSuitableWithBonus,
   VoteBonusWithTarget,
@@ -22,7 +25,6 @@ import {
   VoteBonusWithBombLeft,
   MoveToBonus,
 
-  CalculateBombDelay,
   FindBombCandidate,
   TargetSuitableWithBomb,
   VoteBombWithTarget,
@@ -53,9 +55,9 @@ const First = function(...params) {
 First.prototype = newChildObject(AI.prototype);
 
 First.prototype.buildTree = function() {
-  return new Priority({
+  return new Sequence({
     children:[
-      new Sequence({
+      new SequenceAlwaysSuccess({
         name: 'pre-processing',
         children: [
           new SyncData(this),
@@ -65,64 +67,52 @@ First.prototype.buildTree = function() {
           new UpdateVirus(this),
           new UpdateHuman(this),
           // need implement update enemy grid in future
-          new UpdateGrid(this),
           new CalculateBombDelay(this),
-          new Failer() // make sequence pre-process alway Fail
-        ]
-      }),
-      new Sequence({
-        name: 'Eat',
-        children: [
-          new Inverter({
-            child: new IsNotSafe(this)
-          }),
-          // new NoBombLeft(this), // dump
-          new FindBonusCandidate(this),
-          new Priority({
-            children: [
-              new Sequence({
-                name: 'keep old target if you can',
-                children: [
-                  new TargetSuitableWithBonus(this),
-                  new VoteBonusWithTarget(this),
-                  new MoveToBonusWithTarget(this)
-                ]
-              }),
-              new Sequence({
-                children: [
-                  new Priority({
-                    children: [
-                      new Sequence({
-                        name: 'find best bonus when no bomb left',
-                        children: [
-                          new NoBombLeft(this),
-                          new VoteBonus(this)
-                        ]
-                      }),
-                      new Sequence({
-                        name: 'find best bonus when has bomb left',
-                        children: [
-                          new VoteBonusWithBombLeft(this),
-                        ]
-                      }),
-                    ]
-                  }),
-                  new MoveToBonus(this)
-                ]
-              })
-            ]
-          }),
-          // new Failer()
-        ]
-      }),
-      new Sequence({
-        name: 'Bomb',
-        children: [
-          new Inverter({
-            child: new IsNotSafe(this)
-          }),
+          new CalculateEmpty(this),
+          new UpdateGrid(this),
           new FindBombCandidate(this),
+          new FindBonusCandidate(this)
+        ]
+      }),
+      new Priority({
+        children: [
+          // new Priority({
+          //   name: 'Eat',
+          //   children: [
+          //     new Sequence({
+          //       name: 'keep old target if you can',
+          //       children: [
+          //         new TargetSuitableWithBonus(this),
+          //         new VoteBonusWithTarget(this),
+          //         new MoveToBonusWithTarget(this)
+          //       ]
+          //     }),
+          //     new Sequence({
+          //       children: [
+          //         new Priority({
+          //           children: [
+          //             new Sequence({
+          //               name: 'find best bonus when no bomb left',
+          //               children: [
+          //                 new NoBombLeft(this),
+          //                 new VoteBonus(this)
+          //               ]
+          //             }),
+          //             new Sequence({
+          //               name: 'find best bonus when has bomb left',
+          //               children: [
+          //                 new VoteBonusWithBombLeft(this),
+          //               ]
+          //             }),
+          //           ]
+          //         }),
+          //         new MoveToBonus(this)
+          //       ]
+          //     })
+          //   ]
+          // }),
           new Priority({
+            name: 'Bomb',
             children: [
               new Sequence({
                 children: [
@@ -138,43 +128,44 @@ First.prototype.buildTree = function() {
                 ]
               })
             ]
-          })
-        ]
-      }),
-      new Sequence({
-        name: 'Safe',
-        children: [
-          new SequenceAlwaysSuccess({
-            children: [
-              new IsBombPrefix(this),
-              new CleanGrid(this),
-              new UpdateGrid(this),
-            ]
           }),
-          new IsNotSafe(this),
-          new Priority({
+          new Sequence({
+            name: 'Safe',
             children: [
-              new FindSafePlace(this) // find fully safe place
-              // dead or alive. implement case all place are not safe -> find best place in that context
-            ]
-          }),
-          new Priority({
-            children: [
-              new Sequence({
+              new SequenceAlwaysSuccess({
                 children: [
-                  new TargetSuitableWithSafe(this),
-                  new VoteSafePlaceWithTarget(this),
-                  new MoveToSafeWithTarget(this)
+                  new IsBombPrefix(this),
+                  new CleanGrid(this),
+                  new CalculateBombDelay(this), // drop virtual bomb in next step, so re-update map... my lost
+                  new UpdateGrid(this),
                 ]
               }),
-              new Sequence({
+              new IsNotSafe(this),
+              new Priority({
                 children: [
-                  new VoteSafePlace(this),
-                  new MoveToSafe(this)
+                  new FindSafePlace(this) // find fully safe place
+                  // dead or alive. implement case all place are not safe -> find best place in that context
                 ]
-              })
+              }),
+              new Priority({
+                children: [
+                  new Sequence({
+                    children: [
+                      new TargetSuitableWithSafe(this),
+                      new VoteSafePlaceWithTarget(this),
+                      new MoveToSafeWithTarget(this)
+                    ]
+                  }),
+                  new Sequence({
+                    children: [
+                      new VoteSafePlace(this),
+                      new MoveToSafe(this)
+                    ]
+                  })
+                ]
+              }),
             ]
-          }),
+          })
         ]
       })
     ]

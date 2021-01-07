@@ -33,11 +33,14 @@ FindBombCandidate.prototype.tick = function(tree) {
       const node = grid.getNodeAt(j, i);
       const { travelCost } = node;
 
-      const accept = this.conditionFn.apply(this, [node, tpc]);
+      // bombable
+      // travel time >= remainTime or
+      // travel time < remain and safe place
+      const accept = this.conditionFn.apply(this, [node, tpc, remain]);
       if (accept) {
       // if (accept && remain <= travelCost * tpc) {
-        const score = this.ref.scoreFn.apply(this, [node]);
-        const extreme = this.ref.extremeFn.apply(this, [score, travelCost]);
+        const score = this.ref.scoreFn.apply(this.ref, [node]);
+        const extreme = this.ref.extremeFn.apply(this.ref, [score, travelCost]);
 
         candidates.push({
           position: {
@@ -62,7 +65,7 @@ FindBombCandidate.prototype.tick = function(tree) {
   }
 };
 
-FindBombCandidate.prototype.conditionFn = function(node, tpc) {
+FindBombCandidate.prototype.conditionFn = function(node, tpc, remain) {
   const {
     travelCost,
     value,
@@ -77,9 +80,16 @@ FindBombCandidate.prototype.conditionFn = function(node, tpc) {
     return false;
   }
 
-  // for (const remain of flameRemain) {
-    
-  // }
+  const travelTime = tpc * travelCost;
+
+  const ff = _(flameRemain)
+    .map(f => f - travelTime)
+    .filter(f => f > 0)
+    .value();
+
+  if (ff.length > 0 && travelTime < remain) {
+    return false;
+  }
 
   return true;
 };

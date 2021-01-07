@@ -32,6 +32,9 @@ UpdateGrid.prototype.tick = function(tree) {
 };
 
 UpdateGrid.prototype.travelGrid = function(playerId, pos, grid) {
+  const { blackboard } = this.ref;
+  const { cols, rows } = blackboard.get('emptyCheck', true);
+
   let openList = new Heap((nodeA, nodeB) => {
     return nodeA.f - nodeB.f;
   });
@@ -52,7 +55,7 @@ UpdateGrid.prototype.travelGrid = function(playerId, pos, grid) {
     node.closed = true;
 
     // try place bomb and calculate score of that bomb
-    const bombProfit = this.tryPlaceBomb(playerId, node, grid);
+    const bombProfit = (rows[node.y] || cols[node.x]) ? this.tryPlaceBomb(playerId, node, grid) : {};
     node.bombProfit = bombProfit;
 
     const nextTravelCost = node.travelCost + 1;
@@ -81,8 +84,8 @@ UpdateGrid.prototype.travelGrid = function(playerId, pos, grid) {
         neighbor.scoreProfit = this.ref.mergeProfit(node.scoreProfit, scoreProfit)
 
         if (!neighbor.opened) {
-          openList.push(neighbor);
           neighbor.opened = true;
+          openList.push(neighbor);
         } else {
           // the neighbor can be reached with smaller cost.
           // Since its f value has been updated, we have to
@@ -115,7 +118,8 @@ UpdateGrid.prototype.tryPlaceBomb = function(playerId, pos, grid) {
   const profit = this.ref.drawBombFlames(tempBomb, grid, this.ref.updateFlameFunction, 'tempFlameRemain');
 
   // check where can find safe place/path
-  const safe = this.canPlayerWalk(playerId, pos, pos, grid, travelCost, 0, 400) && this.findSafePlace(playerId, pos, grid);
+  const safe = this.canPlayerWalk(playerId, pos, pos, grid, travelCost, 0, 400, false) && this.findSafePlace(playerId, pos, grid);
+  // const safe = this.findSafePlace(playerId, pos, grid);
   profit.safe = safe;
 
   // reverse state
@@ -165,7 +169,8 @@ UpdateGrid.prototype.findSafePlace = function(playerId, pos, grid) {
 };
 
 UpdateGrid.prototype.canPlayerWalk = function(...params) {
-  return this.ref.canPlayerWalkByFlame(...params) && this.ref.canPlayerWalkBySarsCov(...params);
+  // return this.ref.canPlayerWalkByFlame(...params) && this.ref.canPlayerWalkBySarsCov(...params);
+  return this.ref.canPlayerWalkByFlame(...params);
 };
 
 UpdateGrid.prototype.isSafePlace = function(node) {

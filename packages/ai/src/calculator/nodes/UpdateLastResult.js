@@ -34,8 +34,9 @@ UpdateLastResult.prototype.tick = function(tree) {
     // same as last event
     const tpc = this.ref.timeToCrossACell(id);
     const diff = this.diffTimestamp(current.timestamp, timestamp);
-    if (diff > 1.1 * tpc + 50) {
+    if (diff > (index > 0 ? 1.3 * tpc + 50 : 1.5 * tpc + 50)) {
       // long time no move, remove target
+      console.log('long time no move');
       this.ref.lastResult = null;
     }
   } else {
@@ -46,10 +47,12 @@ UpdateLastResult.prototype.tick = function(tree) {
 
       if (index == positions.length - 2) {
         // meet target, remove target
+        console.log('target done');
         this.ref.lastResult = null;
       }
     } else {
       // wrong way, remove target
+      console.log('wrong way');
       this.ref.lastResult = null;
     }
   }
