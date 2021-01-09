@@ -48,14 +48,9 @@ FindSafePlace.prototype.tick = function(tree) {
     }
   }
 
-  // console.log(candidates);
-  if (candidates.length <= 0) {
-    return FAILURE;
-  } else {
-    blackboard.set('safeCandidates', candidates, true);
+  blackboard.set('safeCandidates', candidates, true);
 
-    return SUCCESS;
-  }
+  return SUCCESS;
 };
 
 FindSafePlace.prototype.conditionFn = function(node) {

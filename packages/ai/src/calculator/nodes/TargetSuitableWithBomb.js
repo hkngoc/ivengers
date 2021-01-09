@@ -17,7 +17,7 @@ TargetSuitableWithBomb.prototype = newChildObject(MyBaseNode.prototype);
 TargetSuitableWithBomb.prototype.tick = function(tree) {
   const { grid, lastResult } = this.ref;
 
-  if (!lastResult) {
+  if (!lastResult || !lastResult.which || !lastResult.which.includes('bomb') ) {
     return FAILURE;
   }
 

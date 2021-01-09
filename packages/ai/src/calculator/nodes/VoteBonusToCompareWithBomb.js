@@ -13,7 +13,11 @@ const VoteBonusToCompareWithBomb = function(ref) {
 VoteBonusToCompareWithBomb.prototype = newChildObject(MyBaseNode.prototype);
 
 VoteBonusToCompareWithBomb.prototype.tick = function(tree) {
-  return FAILURE;
+  const { blackboard } = this.ref;
+
+  blackboard.set('compareWithBomb', 'bonusCandidates', true);
+
+  return SUCCESS;
 };
 
 export default VoteBonusToCompareWithBomb;

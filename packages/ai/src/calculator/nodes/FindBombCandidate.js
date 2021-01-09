@@ -56,6 +56,7 @@ FindBombCandidate.prototype.tick = function(tree) {
     }
   }
 
+  console.log(candidates);
   blackboard.set('bombCandidates', candidates, true);
 
   return SUCCESS;
@@ -71,7 +72,7 @@ FindBombCandidate.prototype.conditionFn = function(node, tpc, remain) {
 
   const { box = 0, enemy = 0, safe } = bombProfit;
 
-  const hasBenefit = travelCost >= 0 && safe && (box > 0 || enemy > 0);
+  const hasBenefit = travelCost >= 0 && safe && (this.ref.countingScore({ box, enemy }) > 0);
   if (!hasBenefit) {
     return false;
   }
@@ -84,6 +85,7 @@ FindBombCandidate.prototype.conditionFn = function(node, tpc, remain) {
     .value();
 
   if (ff.length > 0 && travelTime < remain) {
+    // that pos not safe and move to that pos can not drop bomb immediately
     return false;
   }
 

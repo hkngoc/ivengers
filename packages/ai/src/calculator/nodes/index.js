@@ -33,6 +33,7 @@ import FindBombCandidate from './FindBombCandidate';
 import HasBombCandidate from './HasBombCandidate';
 import TargetSuitableWithBomb from './TargetSuitableWithBomb';
 import VoteBombWithTarget from './VoteBombWithTarget';
+import VoteBombWithTargetCompare from './VoteBombWithTargetCompare';
 import MoveToDropBombWithTarget from './MoveToDropBombWithTarget';
 
 import VoteBomb from './VoteBomb';
@@ -41,6 +42,7 @@ import MoveToDropBomb from './MoveToDropBomb';
 import CleanGrid from './CleanGrid';
 import IsBombPrefix from './IsBombPrefix';
 import IsNotSafe from './IsNotSafe';
+import HasSafeCandidate from './HasSafeCandidate';
 import FindSafePlace from './FindSafePlace';
 import TargetSuitableWithSafe from './TargetSuitableWithSafe'
 import VoteSafePlaceWithTarget from './VoteSafePlaceWithTarget'
@@ -88,6 +90,7 @@ export {
   HasBombCandidate,
   TargetSuitableWithBomb,
   VoteBombWithTarget,
+  VoteBombWithTargetCompare,
   MoveToDropBombWithTarget,
   VoteBomb,
   MoveToDropBomb,
@@ -95,6 +98,7 @@ export {
   CleanGrid,
   IsBombPrefix,
   IsNotSafe,
+  HasSafeCandidate,
   FindSafePlace,
   TargetSuitableWithSafe,
   VoteSafePlaceWithTarget,

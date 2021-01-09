@@ -5,56 +5,7 @@ import {
   Inverter
 } from 'behavior3js';
 
-import {
-  FilterEvent,
-
-  SyncData,
-  UpdateFlame,
-  UpdateVirus,
-  UpdateHuman,
-  UpdateGrid,
-  UpdateLastResult,
-
-  CalculateEmpty,
-  CalculateBombDelay,
-
-  TargetBonusStillGood,
-  TargetSafeStillGood,
-  KeepOldTarget,
-  HasTarget,
-  VoteTargetToCompareWithBomb,
-  VoteBonusToCompareWithBomb,
-  HasTargetToCompareWithBomb,
-
-  FindBonusCandidate,
-  HasBonusCandidate,
-  TargetSuitableWithBonus,
-  VoteBonusWithTarget,
-  MoveToBonusWithTarget,
-  NoBombLeft,
-  VoteBonus,
-  VoteBonusWithBombLeft,
-  MoveToBonus,
-
-  FindBombCandidate,
-  HasBombCandidate,
-  TargetSuitableWithBomb,
-  VoteBombWithTarget,
-  MoveToDropBombWithTarget,
-  VoteBomb,
-  MoveToDropBomb,
-
-  SequenceAlwaysSuccess,
-  CleanGrid,
-  IsBombPrefix,
-  IsNotSafe,
-  FindSafePlace,
-  TargetSuitableWithSafe,
-  VoteSafePlaceWithTarget,
-  MoveToSafeWithTarget,
-  VoteSafePlace,
-  MoveToSafe,
-} from '../nodes';
+import * as NODES from '../nodes';
 
 import AI from './ai';
 
@@ -70,100 +21,112 @@ First.prototype.buildTree = function() {
   return new Sequence({
     children:[
       // new FilterEvent(this),
-      new SequenceAlwaysSuccess({
+      new NODES.SequenceAlwaysSuccess({
         name: 'pre-processing',
         children: [
-          new SyncData(this),
-          new UpdateLastResult(this),
-          new UpdateFlame(this),
+          new NODES.SyncData(this),
+          new NODES.UpdateLastResult(this),
+          new NODES.UpdateFlame(this),
           // need implement guest path of virus/human more precision. Currently, ignore Hazard from virus/human
-          new UpdateVirus(this),
-          new UpdateHuman(this),
+          new NODES.UpdateVirus(this),
+          new NODES.UpdateHuman(this),
           // need implement update enemy grid in future
-          new CalculateBombDelay(this),
-          new CalculateEmpty(this),
-          new UpdateGrid(this),
+          new NODES.CalculateBombDelay(this),
+          new NODES.CalculateEmpty(this),
+          new NODES.UpdateGrid(this),
         ]
       }),
-      new SequenceAlwaysSuccess({
+      new NODES.SequenceAlwaysSuccess({
         children: [
-          new FindBombCandidate(this),
-          new FindBonusCandidate(this)
+          new NODES.FindBombCandidate(this),
+          new NODES.FindBonusCandidate(this),
+          new NODES.FindSafePlace(this) // find fully safe place
         ]
       }),
       new Priority({
         children: [
-          // new Sequence({
-          //   name: 'Eat',
-          //   children: [
-          //     new HasBonusCandidate(this),
-          //     new Priority({
-          //       children: [
-          //         new Sequence({
-          //           name: 'keep old target if you can',
-          //           children: [
-          //             new HasTarget(this),
-          //             new Priority({
-          //               children: [
-          //                 new TargetBonusStillGood(this),
-          //                 // new TargetBombStillGood(this),
-          //                 new TargetSafeStillGood(this)
-          //               ]
-          //             }),
-          //             new Priority({
-          //               children: [
-          //                 new VoteTargetToCompareWithBomb(this),
-          //                 new KeepOldTarget(this)
-          //               ]
-          //             })
-          //           ]
-          //         }),
-          //         new Sequence({
-          //           children: [
-          //             new HasBombCandidate(this),
-          //             new Priority({
-          //               children: [
-          //                 new Sequence({
-          //                   children: [
-          //                     new NoBombLeft(this),
-          //                     new VoteBonus(this),
-          //                     new MoveToBonus(this)
-          //                   ]
-          //                 }),
-          //                 new VoteBonusToCompareWithBomb(this)
-          //               ]
-          //             })
-          //           ]
-          //         }),
-          //         new Sequence({
-          //           children: [
-          //             new VoteBonus(this),
-          //             new MoveToBonus(this)
-          //           ]
-          //         })
-          //       ]
-          //     }),
-          //     new Inverter({
-          //       child: new HasTargetToCompareWithBomb(this)
-          //     })
-          //   ]
-          // }),
           new Sequence({
+            name: 'Eat',
             children: [
-              new HasBombCandidate(this),
+              new NODES.HasBonusCandidate(this),
               new Priority({
                 children: [
                   new Sequence({
+                    name: 'keep old target if you can',
                     children: [
-                      new TargetSuitableWithBomb(this),
-                      new VoteBombWithTarget(this),
-                      new MoveToDropBombWithTarget(this)
+                      new NODES.HasTarget(this),
+                      new Priority({
+                        children: [
+                          new NODES.TargetBonusStillGood(this),
+                          new NODES.TargetSafeStillGood(this)
+                        ]
+                      }),
+                      new Priority({
+                        children: [
+                          new Sequence({
+                            children: [
+                              new NODES.HasBombCandidate(this),
+                              new NODES.VoteTargetToCompareWithBomb(this)
+                            ]
+                          }),
+                          new NODES.KeepOldTarget(this)
+                        ]
+                      })
                     ]
                   }),
                   new Sequence({
                     children: [
-                      new VoteBomb(this),
-                      new MoveToDropBomb(this)
+                      new NODES.HasBombCandidate(this),
+                      new NODES.VoteBonusToCompareWithBomb(this)
+                      // new Priority({
+                      //   children: [
+                      //     new Sequence({
+                      //       children: [
+                      //         new NODES.NoBombLeft(this),
+                      //         new NODES.VoteBonus(this),
+                      //         new NODES.MoveToBonus(this)
+                      //       ]
+                      //     }),
+                      //   ]
+                      // })
+                    ]
+                  }),
+                  new Sequence({
+                    children: [
+                      new NODES.VoteBonus(this),
+                      new NODES.MoveToBonus(this)
+                    ]
+                  })
+                ]
+              }),
+              new Inverter({
+                child: new NODES.HasTargetToCompareWithBomb(this)
+              })
+            ]
+          }),
+          new Sequence({
+            children: [
+              new NODES.HasBombCandidate(this),
+              new Priority({
+                children: [
+                  new Sequence({
+                    children: [
+                      new NODES.HasTargetToCompareWithBomb(this),
+                      new NODES.VoteBombWithTargetCompare(this),
+                      new NODES.MoveToDropBomb(this)
+                    ]
+                  }),
+                  new Sequence({
+                    children: [
+                      new NODES.TargetSuitableWithBomb(this),
+                      new NODES.VoteBombWithTarget(this),
+                      new NODES.MoveToDropBombWithTarget(this)
+                    ]
+                  }),
+                  new Sequence({
+                    children: [
+                      new NODES.VoteBomb(this),
+                      new NODES.MoveToDropBomb(this)
                     ]
                   })
                 ]
@@ -173,18 +136,19 @@ First.prototype.buildTree = function() {
           new Sequence({
             name: 'Safe',
             children: [
-              new SequenceAlwaysSuccess({
+              new NODES.SequenceAlwaysSuccess({
                 children: [
-                  new IsBombPrefix(this),
-                  new CleanGrid(this),
-                  new CalculateBombDelay(this), // drop virtual bomb in next step, so re-update map... my lost
-                  new UpdateGrid(this),
+                  new NODES.IsBombPrefix(this),
+                  new NODES.CleanGrid(this),
+                  new NODES.CalculateBombDelay(this), // drop virtual bomb in next step, so re-update map... my lost
+                  new NODES.UpdateGrid(this),
+                  new NODES.FindSafePlace(this)
                 ]
               }),
-              new IsNotSafe(this),
+              new NODES.IsNotSafe(this),
               new Priority({
                 children: [
-                  new FindSafePlace(this) // find fully safe place
+                  new NODES.HasSafeCandidate(this),
                   // dead or alive. implement case all place are not safe -> find best place in that context
                 ]
               }),
@@ -192,15 +156,15 @@ First.prototype.buildTree = function() {
                 children: [
                   new Sequence({
                     children: [
-                      new TargetSuitableWithSafe(this),
-                      new VoteSafePlaceWithTarget(this),
-                      new MoveToSafeWithTarget(this)
+                      new NODES.TargetSuitableWithSafe(this),
+                      new NODES.VoteSafePlaceWithTarget(this),
+                      new NODES.MoveToSafeWithTarget(this)
                     ]
                   }),
                   new Sequence({
                     children: [
-                      new VoteSafePlace(this),
-                      new MoveToSafe(this)
+                      new NODES.VoteSafePlace(this),
+                      new NODES.MoveToSafe(this)
                     ]
                   })
                 ]

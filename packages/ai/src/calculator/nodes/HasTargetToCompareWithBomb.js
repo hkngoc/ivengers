@@ -13,7 +13,15 @@ const HasTargetToCompareWithBomb = function(ref) {
 HasTargetToCompareWithBomb.prototype = newChildObject(MyBaseNode.prototype);
 
 HasTargetToCompareWithBomb.prototype.tick = function(tree) {
-  return FAILURE;
+  const { blackboard, lastResult } = this.ref;
+
+  const key = blackboard.get('compareWithBomb', true);
+
+  if (key) {
+    return SUCCESS;
+  } else {
+    return FAILURE;
+  }
 };
 
 export default HasTargetToCompareWithBomb;

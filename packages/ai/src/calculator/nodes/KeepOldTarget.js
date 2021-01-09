@@ -13,7 +13,12 @@ const KeepOldTarget = function(ref) {
 KeepOldTarget.prototype = newChildObject(MyBaseNode.prototype);
 
 KeepOldTarget.prototype.tick = function(tree) {
-  return FAILURE;
+  const { blackboard, lastResult } = this.ref;
+
+  const appliedResult = { ...lastResult, watch: true };
+  blackboard.set('result', appliedResult, true);
+
+  return SUCCESS;
 };
 
 export default KeepOldTarget;

@@ -13,7 +13,34 @@ const TargetBonusStillGood = function(ref) {
 TargetBonusStillGood.prototype = newChildObject(MyBaseNode.prototype);
 
 TargetBonusStillGood.prototype.tick = function(tree) {
-  return FAILURE;
+  const { blackboard, lastResult, grid } = this.ref;
+  const candidates = blackboard.get('bonusCandidates', true);
+  const { winner: { position }, which } = lastResult;
+
+  if (!which || !which.includes('bonus')) {
+    return FAILURE;
+  }
+
+  const index = _.findIndex(candidates, candidate => candidate.position.x == position.x && candidate.position.y == position.y);
+
+  if (index < 0) {
+    return FAILURE;
+  }
+  // if (index < 0 || (index >= 0 && candidates.length > 10 && index > candidates.length / 3)) {
+  //   return FAILURE;
+  // }
+
+  const { directs: rDirects } = lastResult;
+  const { directs } = this.ref.tracePath(position, grid);
+
+  if (!rDirects.endsWith(directs)) {
+    // not same path
+    return FAILURE;
+  }
+
+  blackboard.set('targetCandidate', [candidates[index]], true);
+
+  return SUCCESS;
 };
 
 export default TargetBonusStillGood;

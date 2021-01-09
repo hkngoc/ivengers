@@ -343,6 +343,19 @@ AI.prototype.tracePath = function(pos, grid) {
   };
 };
 
+AI.prototype.countingScore = function(obj) {
+  const { box = 0, enemy = 0, gifts = [], spoils = [] } = obj;
+
+  let score = 0;
+
+  score = score + 1 * box;
+  score = score + 0 * enemy; // disable to debug
+  score = score + 1 * gifts.length; // can be score by type of gift or spoil...
+  score = score + 1 * spoils.length;
+
+  return score;
+};
+
 AI.prototype.scoreFn = function(node) {
   const {
     travelCost,
@@ -353,16 +366,12 @@ AI.prototype.scoreFn = function(node) {
   const { box = 0, enemy = 0, safe } = bombProfit;
   const { gifts = [], spoils = [] } = scoreProfit;
 
-  let score = 0;
-
-  if (safe) {
-    score = score + 1 * box +  1 * enemy;
-  }
-
-  score = score + 1 * gifts.length;
-  score = score + 1 * spoils.length;
-
-  return score;
+  return this.countingScore({
+    gifts,
+    spoils,
+    box: safe ? box : 0,
+    enemy: safe ? enemy : 0
+  });
 };
 
 AI.prototype.roundScore = function(score) {
