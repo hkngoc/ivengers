@@ -6,6 +6,8 @@ import {
 } from 'behavior3js';
 
 import {
+  FilterEvent,
+
   SyncData,
   UpdateFlame,
   UpdateVirus,
@@ -16,7 +18,16 @@ import {
   CalculateEmpty,
   CalculateBombDelay,
 
+  TargetBonusStillGood,
+  TargetSafeStillGood,
+  KeepOldTarget,
+  HasTarget,
+  VoteTargetToCompareWithBomb,
+  VoteBonusToCompareWithBomb,
+  HasTargetToCompareWithBomb,
+
   FindBonusCandidate,
+  HasBonusCandidate,
   TargetSuitableWithBonus,
   VoteBonusWithTarget,
   MoveToBonusWithTarget,
@@ -26,6 +37,7 @@ import {
   MoveToBonus,
 
   FindBombCandidate,
+  HasBombCandidate,
   TargetSuitableWithBomb,
   VoteBombWithTarget,
   MoveToDropBombWithTarget,
@@ -57,6 +69,7 @@ First.prototype = newChildObject(AI.prototype);
 First.prototype.buildTree = function() {
   return new Sequence({
     children:[
+      // new FilterEvent(this),
       new SequenceAlwaysSuccess({
         name: 'pre-processing',
         children: [
@@ -70,61 +83,89 @@ First.prototype.buildTree = function() {
           new CalculateBombDelay(this),
           new CalculateEmpty(this),
           new UpdateGrid(this),
+        ]
+      }),
+      new SequenceAlwaysSuccess({
+        children: [
           new FindBombCandidate(this),
           new FindBonusCandidate(this)
         ]
       }),
       new Priority({
         children: [
-          // new Priority({
+          // new Sequence({
           //   name: 'Eat',
           //   children: [
-          //     new Sequence({
-          //       name: 'keep old target if you can',
+          //     new HasBonusCandidate(this),
+          //     new Priority({
           //       children: [
-          //         new TargetSuitableWithBonus(this),
-          //         new VoteBonusWithTarget(this),
-          //         new MoveToBonusWithTarget(this)
-          //       ]
-          //     }),
-          //     new Sequence({
-          //       children: [
-          //         new Priority({
+          //         new Sequence({
+          //           name: 'keep old target if you can',
           //           children: [
-          //             new Sequence({
-          //               name: 'find best bonus when no bomb left',
+          //             new HasTarget(this),
+          //             new Priority({
           //               children: [
-          //                 new NoBombLeft(this),
-          //                 new VoteBonus(this)
+          //                 new TargetBonusStillGood(this),
+          //                 // new TargetBombStillGood(this),
+          //                 new TargetSafeStillGood(this)
           //               ]
           //             }),
-          //             new Sequence({
-          //               name: 'find best bonus when has bomb left',
+          //             new Priority({
           //               children: [
-          //                 new VoteBonusWithBombLeft(this),
+          //                 new VoteTargetToCompareWithBomb(this),
+          //                 new KeepOldTarget(this)
           //               ]
-          //             }),
+          //             })
           //           ]
           //         }),
-          //         new MoveToBonus(this)
+          //         new Sequence({
+          //           children: [
+          //             new HasBombCandidate(this),
+          //             new Priority({
+          //               children: [
+          //                 new Sequence({
+          //                   children: [
+          //                     new NoBombLeft(this),
+          //                     new VoteBonus(this),
+          //                     new MoveToBonus(this)
+          //                   ]
+          //                 }),
+          //                 new VoteBonusToCompareWithBomb(this)
+          //               ]
+          //             })
+          //           ]
+          //         }),
+          //         new Sequence({
+          //           children: [
+          //             new VoteBonus(this),
+          //             new MoveToBonus(this)
+          //           ]
+          //         })
           //       ]
+          //     }),
+          //     new Inverter({
+          //       child: new HasTargetToCompareWithBomb(this)
           //     })
           //   ]
           // }),
-          new Priority({
-            name: 'Bomb',
+          new Sequence({
             children: [
-              new Sequence({
+              new HasBombCandidate(this),
+              new Priority({
                 children: [
-                  new TargetSuitableWithBomb(this),
-                  new VoteBombWithTarget(this),
-                  new MoveToDropBombWithTarget(this)
-                ]
-              }),
-              new Sequence({
-                children: [
-                  new VoteBomb(this),
-                  new MoveToDropBomb(this)
+                  new Sequence({
+                    children: [
+                      new TargetSuitableWithBomb(this),
+                      new VoteBombWithTarget(this),
+                      new MoveToDropBombWithTarget(this)
+                    ]
+                  }),
+                  new Sequence({
+                    children: [
+                      new VoteBomb(this),
+                      new MoveToDropBomb(this)
+                    ]
+                  })
                 ]
               })
             ]
@@ -163,7 +204,7 @@ First.prototype.buildTree = function() {
                     ]
                   })
                 ]
-              }),
+              })
             ]
           })
         ]

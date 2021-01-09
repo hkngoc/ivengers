@@ -13,7 +13,14 @@ const MoveToDropBomb = function(ref) {
 MoveToDropBomb.prototype = newChildObject(MyBaseNode.prototype);
 
 MoveToDropBomb.prototype.tick = function(tree) {
-  const { blackboard, grid } = this.ref;
+  const { blackboard, grid, config: { other: { rejectByStop } } } = this.ref;
+
+  const reject = blackboard.get('rejectTarget', true);
+  if (rejectByStop && reject) {
+    blackboard.set('result', { directs: 'x', positions: [], which: 'reject' }, true);
+
+    return SUCCESS;
+  }
 
   const winner = blackboard.get('bombWinner', true);
   const remain = blackboard.get('bombRemain', true);

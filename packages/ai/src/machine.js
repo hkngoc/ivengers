@@ -2,8 +2,16 @@ import { connect } from '@ivengers/hostp';
 import Brain from './brain';
 
 const Machine = function(config) {
-  this.config = config;
-  this.brain = new Brain(config, this.onCalculated.bind(this));
+  const applied = {
+    ...config,
+    other: {
+      rejectByStop: false // some other config. currenly, hardcode here
+    }
+  };
+
+  this.config = applied;
+
+  this.brain = new Brain(applied, this.onCalculated.bind(this));
 };
 
 Machine.prototype.onHeart = function() {

@@ -23,6 +23,12 @@ UpdateLastResult.prototype.tick = function(tree) {
   }
 
   const { positions } = lastResult;
+
+  if (!positions || positions.length <= 0) {
+    this.ref.lastResult = null;
+    return SUCCESS;
+  }
+
   const player = this.ref.getMyPlayer();
   const { id, currentPosition: { col, row } } = player;
 

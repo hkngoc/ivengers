@@ -227,20 +227,17 @@ AI.prototype.timeToCrossACell = function(id) {
 };
 
 AI.prototype.acceptFlame = function(remain, cost, preCost, tpc, offset) {
-  const travelTime = tpc * cost;
-  const remainOffet = tpc * preCost;
+  const travelTime = tpc * (cost + preCost);
 
   // need so much more thinking about that formula about range time of flame effect
   // currenly, I approve that with:
   // flame time = 400ms
   // offset = 200
-  const left = remain - tpc/2 - offset - remainOffet;
-  const right = remain + 400 - remainOffet + tpc/2 + offset;
 
-  if (travelTime > left && travelTime < right) {
-    return false;
-  } else {
+  if ((travelTime - tpc/2 > remain + 400 + offset) || (travelTime + tpc/2 < remain - offset)) {
     return true;
+  } else {
+    return false;
   }
 };
 

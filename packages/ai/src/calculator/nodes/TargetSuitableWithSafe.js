@@ -28,6 +28,7 @@ TargetSuitableWithSafe.prototype.tick = function(tree) {
   const index = _.findIndex(candidates, candidate => candidate.position.x == position.x && candidate.position.y == position.y);
 
   if (index < 0) {
+    blackboard.set('rejectTarget', true, true);
     return FAILURE;
   }
   // if (index < 0 || (index >= 0 && candidates.length > 10 && index > candidates.length / 3)) {
@@ -39,6 +40,7 @@ TargetSuitableWithSafe.prototype.tick = function(tree) {
 
   if (!rDirects.endsWith(directs)) {
     // not same path
+    blackboard.set('rejectTarget', true, true);
     return FAILURE;
   }
 

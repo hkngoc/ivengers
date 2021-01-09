@@ -56,13 +56,9 @@ FindBombCandidate.prototype.tick = function(tree) {
     }
   }
 
-  if (candidates.length <= 0) {
-    return FAILURE;
-  } else {
-    blackboard.set('bombCandidates', candidates, true);
+  blackboard.set('bombCandidates', candidates, true);
 
-    return SUCCESS;
-  }
+  return SUCCESS;
 };
 
 FindBombCandidate.prototype.conditionFn = function(node, tpc, remain) {

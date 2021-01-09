@@ -50,13 +50,9 @@ FindBonusCandidate.prototype.tick = function(tree) {
     }
   }
 
-  if (candidates.length <= 0) {
-    return FAILURE;
-  } else {
-    blackboard.set('bonusCandidates', candidates, true);
+  blackboard.set('bonusCandidates', candidates, true);
 
-    return SUCCESS;
-  }
+  return SUCCESS;
 };
 
 FindBonusCandidate.prototype.conditionFn = function(node) {
