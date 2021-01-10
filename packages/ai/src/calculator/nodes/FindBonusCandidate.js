@@ -62,9 +62,9 @@ FindBonusCandidate.prototype.conditionFn = function(node) {
     scoreProfit = {}
   } = node;
 
-  const { gifts = [], spoils = [] } = scoreProfit;
+  const { gifts, spoils, virus, human } = scoreProfit;
 
-  return travelCost >= 0 && (gifts.length > 0 || spoils.length > 0);
+  return travelCost >= 0 && (this.ref.countingScore({ gifts, spoils, virus, human }) > 0);
 };
 
 export default FindBonusCandidate;

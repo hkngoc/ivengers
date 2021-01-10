@@ -70,7 +70,7 @@ FindBombCandidate.prototype.conditionFn = function(node, tpc, remain) {
     flameRemain = []
   } = node;
 
-  const { box = 0, enemy = 0, safe } = bombProfit;
+  const { box, enemy, safe } = bombProfit;
 
   const hasBenefit = travelCost >= 0 && safe && (this.ref.countingScore({ box, enemy }) > 0);
   if (!hasBenefit) {

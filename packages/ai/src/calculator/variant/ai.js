@@ -164,11 +164,11 @@ AI.prototype.scoreForBombing = function(playerId, pos, grid, remainTime) {
   return score;
 };
 
-AI.prototype.scoreForWalk = function(playerId, pos, grid) {
-  const score = {};
-
-  const { x, y } = pos;
+AI.prototype.scoreForWalk = function(playerId, node, neighbor, grid, travelCost, offset = 200) {
   const { map_info: { gifts, spoils } } = this.map;
+
+  const { x, y, virusTravel = [], humanTravel = [] } = neighbor;
+  const score = {};
 
   for (const spoil of spoils) {
     const { col, row, spoil_type } = spoil;
@@ -183,6 +183,39 @@ AI.prototype.scoreForWalk = function(playerId, pos, grid) {
     }
   }
 
+  const tpc = this.timeToCrossACell(playerId);
+  const travelTime = tpc * travelCost;
+  const left = travelTime - tpc/2;
+  const right = travelTime + tpc/2;
+
+  const vtpc = this.timeToCrossACell('virus');
+  let virus = 0;
+  for (const step of virusTravel) {
+    const vTravelTime = step * vtpc;
+    const vLeft       = vTravelTime - vtpc/2;
+    const vRight      = vTravelTime + vtpc/2
+
+    if ((vLeft < left && left < vRight) || (vLeft < right && right < vRight)) {
+      virus++;
+    }
+  }
+  score['virus'] = virus;
+
+  const htpc = this.timeToCrossACell('human');
+
+  let human = 0;
+  for (const h of humanTravel) {
+    const { step, curedRemainTime = 0 } = h;
+    const hTravelTime = curedRemainTime + step * htpc;
+    const hLeft       = hTravelTime - htpc/2;
+    const hRight      = hTravelTime + htpc/2
+
+    if ((hLeft < left && left < hRight) || (hLeft < right && right < hRight)) {
+      human++;
+    }
+  }
+  score['human'] = human;
+
   return score;
 };
 
@@ -193,16 +226,24 @@ AI.prototype.safeScoreForWalk = function(playerId, node, neighbor, travelCost) {
   const m1 = _(f1)
     .map(f => f - tpc * (travelCost - 1))
     .filter(f => f >= 0)
-    .minBy() || 2000;
+    .minBy() || 0;
 
   const { flameRemain: f2 = [] } = neighbor;
   const m2 = _(f2)
     .map(f => f - tpc * travelCost)
     .filter(f => f >= 0)
-    .minBy() || 2000;
+    .minBy() || 0;
 
-  if (m2 > m1) {
-    return 1;
+  if (m1 > 0) {
+    if (m2 > 0 && m2 <= m1) {
+      return -1;
+    } else {
+      return 1;
+    }
+  } else {
+    if (m2 > 0) {
+      return -1;
+    }
   }
 
   return 0;
@@ -280,35 +321,35 @@ AI.prototype.canPlayerWalkBySarsCov = function(playerId, node, neighbor, grid, c
   const htpc = this.timeToCrossACell('human');
   const vtpc = this.timeToCrossACell('virus');
 
-  let count = 0;
+  // let count = 0;
 
-  for (const step of virusTravel) {
-    const left = vtpc * step - vtpc/2 - 200;
-    const right = vtpc * step + vtpc/2 + 200;
+  // for (const step of virusTravel) {
+  //   const left = vtpc * step - vtpc/2 - 200;
+  //   const right = vtpc * step + vtpc/2 + 200;
 
-    if (travelTime > left && travelTime < right) {
-      count++;
-    }
-  }
+  //   if (travelTime > left && travelTime < right) {
+  //     count++;
+  //   }
+  // }
 
-  for (const human of humanTravel) {
-    const { step, infected } = human;
+  // for (const human of humanTravel) {
+  //   const { step, infected } = human;
 
-    if (!infected) {
-      continue;
-    }
+  //   if (!infected) {
+  //     continue;
+  //   }
 
-    const left = htpc * step - htpc/2 - 200;
-    const right = htpc * step + htpc/2 + 200;
+  //   const left = htpc * step - htpc/2 - 200;
+  //   const right = htpc * step + htpc/2 + 200;
 
-    if (travelTime > left && travelTime < right) {
-      count++;
-    }
-  }
+  //   if (travelTime > left && travelTime < right) {
+  //     count++;
+  //   }
+  // }
 
-  if (count > passive) {
-    return false;
-  }
+  // if (count > passive) {
+  //   return false;
+  // }
 
   return true;
 };
@@ -344,14 +385,16 @@ AI.prototype.tracePath = function(pos, grid) {
 };
 
 AI.prototype.countingScore = function(obj) {
-  const { box = 0, enemy = 0, gifts = [], spoils = [] } = obj;
+  const { box = 0, enemy = 0, gifts = [], spoils = [], virus = 0, human = 0 } = obj;
 
   let score = 0;
 
   score = score + 1 * box;
   score = score + 0 * enemy; // disable to debug
+  score = score + 1 * virus;
+  score = score + 1 * human;
   score = score + 1 * gifts.length; // can be score by type of gift or spoil...
-  score = score + 1 * spoils.length;
+  score = score + 1 * spoils.length; // 5: pill; 4: power
 
   return score;
 };

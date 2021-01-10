@@ -70,7 +70,7 @@ UpdateGrid.prototype.travelGrid = function(playerId, pos, grid) {
         continue;
       }
 
-      const scoreProfit = this.ref.scoreForWalk(playerId, neighbor, grid);
+      const scoreProfit = this.ref.scoreForWalk(playerId, node, neighbor, grid, nextTravelCost);
       const safeProfit = this.ref.safeScoreForWalk(playerId, node, neighbor, nextTravelCost);
 
       // collect gift bonus on this path, it make better path
@@ -80,7 +80,7 @@ UpdateGrid.prototype.travelGrid = function(playerId, pos, grid) {
       if (!neighbor.opened || ng < neighbor.g) {
         neighbor.f = ng;
         neighbor.parent = node;
-        neighbor.travelCost = neighbor.travelCost || nextTravelCost;
+        neighbor.travelCost = nextTravelCost ;
         neighbor.scoreProfit = this.ref.mergeProfit(node.scoreProfit, scoreProfit)
 
         if (!neighbor.opened) {

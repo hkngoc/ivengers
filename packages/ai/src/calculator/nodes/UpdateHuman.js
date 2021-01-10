@@ -23,7 +23,7 @@ UpdateHuman.prototype.tick = function(tree) {
 };
 
 UpdateHuman.prototype.drawPath = function(human, grid, fn) {
-  const { position, direction, index, infected } = human;
+  const { position, direction, index, infected, curedRemainTime } = human;
   const { col, row } = position;
 
   let directs = {};
@@ -44,7 +44,7 @@ UpdateHuman.prototype.drawPath = function(human, grid, fn) {
         directs = _.omit(directs, direct);
       } else {
       // update grid at near
-      fn.apply(this, [near, grid, step, index, infected]);
+      fn.apply(this, [near, grid, step, index, infected, curedRemainTime]);
 
       directs[direct] = near;
       }
@@ -54,11 +54,11 @@ UpdateHuman.prototype.drawPath = function(human, grid, fn) {
   }
 };
 
-UpdateHuman.prototype.updateFn = function(pos, grid, step, index, infected, which = 'humanTravel') {
+UpdateHuman.prototype.updateFn = function(pos, grid, step, index, infected, curedRemainTime, which = 'humanTravel') {
   const { x, y } = pos;
 
   const node = grid.getNodeAt(x, y);
-  node[which] = [ ...(node[which] || []), { index, step, infected } ];
+  node[which] = [ ...(node[which] || []), { index, step, infected, curedRemainTime } ];
 };
 
 export default UpdateHuman;
