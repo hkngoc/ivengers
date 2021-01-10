@@ -164,7 +164,7 @@ AI.prototype.scoreForBombing = function(playerId, pos, grid, remainTime) {
   return score;
 };
 
-AI.prototype.scoreForWalk = function(playerId, node, neighbor, grid, travelCost, offset = 200) {
+AI.prototype.scoreForWalk = function(playerId, node, neighbor, grid, travelCost, offset = 100) {
   const { map_info: { gifts, spoils } } = this.map;
 
   const { x, y, virusTravel = [], humanTravel = [] } = neighbor;
@@ -192,8 +192,8 @@ AI.prototype.scoreForWalk = function(playerId, node, neighbor, grid, travelCost,
   let virus = 0;
   for (const step of virusTravel) {
     const vTravelTime = step * vtpc;
-    const vLeft       = vTravelTime - vtpc/2;
-    const vRight      = vTravelTime + vtpc/2
+    const vLeft       = vTravelTime - vtpc/2 - offset;
+    const vRight      = vTravelTime + vtpc/2 + offset
 
     if ((vLeft < left && left < vRight) || (vLeft < right && right < vRight)) {
       virus++;
@@ -207,8 +207,8 @@ AI.prototype.scoreForWalk = function(playerId, node, neighbor, grid, travelCost,
   for (const h of humanTravel) {
     const { step, curedRemainTime = 0 } = h;
     const hTravelTime = curedRemainTime + step * htpc;
-    const hLeft       = hTravelTime - htpc/2;
-    const hRight      = hTravelTime + htpc/2
+    const hLeft       = hTravelTime - htpc/2 - offset;
+    const hRight      = hTravelTime + htpc/2 + offset;
 
     if ((hLeft < left && left < hRight) || (hLeft < right && right < hRight)) {
       human++;
@@ -311,45 +311,19 @@ AI.prototype.canPlayerWalkByFlame = function(playerId, node, neighbor, grid, cos
   return safe;
 };
 
-AI.prototype.canPlayerWalkBySarsCov = function(playerId, node, neighbor, grid, cost, preCost = 0, offset = 200) {
+AI.prototype.canPlayerWalkBySarsCov = function(playerId, node, neighbor, grid, cost, preCost = 0, offset = 200, byPassParam, profit) {
   const tpc = this.timeToCrossACell(playerId);
   const travelTime = tpc * cost;
 
   /* check travel time with virus, human infected */
   const passive = this.playerPassiveNumber(playerId);
-  const { virusTravel = [], humanTravel = [] } = node;
-  const htpc = this.timeToCrossACell('human');
-  const vtpc = this.timeToCrossACell('virus');
 
-  // let count = 0;
+  const { scoreProfit: { virus = 0, human = 0 } } = node;
+  const { virus: nextVirus = 0, human: nextHuman = 0 } = profit;
 
-  // for (const step of virusTravel) {
-  //   const left = vtpc * step - vtpc/2 - 200;
-  //   const right = vtpc * step + vtpc/2 + 200;
-
-  //   if (travelTime > left && travelTime < right) {
-  //     count++;
-  //   }
-  // }
-
-  // for (const human of humanTravel) {
-  //   const { step, infected } = human;
-
-  //   if (!infected) {
-  //     continue;
-  //   }
-
-  //   const left = htpc * step - htpc/2 - 200;
-  //   const right = htpc * step + htpc/2 + 200;
-
-  //   if (travelTime > left && travelTime < right) {
-  //     count++;
-  //   }
-  // }
-
-  // if (count > passive) {
-  //   return false;
-  // }
+  if (passive < virus + human + nextVirus + nextHuman) {
+    return false;
+  }
 
   return true;
 };
@@ -391,8 +365,8 @@ AI.prototype.countingScore = function(obj) {
 
   score = score + 1 * box;
   score = score + 0 * enemy; // disable to debug
-  score = score + 1 * virus;
-  score = score + 1 * human;
+  // score = score + 1 * virus;
+  // score = score + 1 * human;
   score = score + 1 * gifts.length; // can be score by type of gift or spoil...
   score = score + 1 * spoils.length; // 5: pill; 4: power
 

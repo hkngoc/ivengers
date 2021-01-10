@@ -64,13 +64,13 @@ UpdateGrid.prototype.travelGrid = function(playerId, pos, grid) {
     for (const neighbor of neighbors) {
 
       // really walkable under bomb flame remain
-      const walkable = this.canPlayerWalk(playerId, node, neighbor, grid, nextTravelCost, 0);
+      const scoreProfit = this.ref.scoreForWalk(playerId, node, neighbor, grid, nextTravelCost);
+      const walkable = this.canPlayerWalk(playerId, node, neighbor, grid, nextTravelCost, 0, 200, false, scoreProfit);
 
       if (neighbor.closed || !walkable) {
         continue;
       }
 
-      const scoreProfit = this.ref.scoreForWalk(playerId, node, neighbor, grid, nextTravelCost);
       const safeProfit = this.ref.safeScoreForWalk(playerId, node, neighbor, nextTravelCost);
 
       // collect gift bonus on this path, it make better path
@@ -118,7 +118,7 @@ UpdateGrid.prototype.tryPlaceBomb = function(playerId, pos, grid) {
   const profit = this.ref.drawBombFlames(tempBomb, grid, this.ref.updateFlameFunction, 'tempFlameRemain');
 
   // check where can find safe place/path
-  const safe = this.canPlayerWalk(playerId, pos, pos, grid, travelCost, 0, 400, false) && this.findSafePlace(playerId, pos, grid);
+  const safe = this.canPlayerWalk(playerId, pos, pos, grid, travelCost, 0, 400, true) && this.findSafePlace(playerId, pos, grid);
   // const safe = this.findSafePlace(playerId, pos, grid);
   profit.safe = safe;
 
@@ -169,8 +169,8 @@ UpdateGrid.prototype.findSafePlace = function(playerId, pos, grid) {
 };
 
 UpdateGrid.prototype.canPlayerWalk = function(...params) {
-  // return this.ref.canPlayerWalkByFlame(...params) && this.ref.canPlayerWalkBySarsCov(...params);
-  return this.ref.canPlayerWalkByFlame(...params);
+  return this.ref.canPlayerWalkByFlame(...params) && this.ref.canPlayerWalkBySarsCov(...params);
+  // return this.ref.canPlayerWalkByFlame(...params);
 };
 
 UpdateGrid.prototype.isSafePlace = function(node) {
