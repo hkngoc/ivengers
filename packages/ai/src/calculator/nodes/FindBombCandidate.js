@@ -56,7 +56,7 @@ FindBombCandidate.prototype.tick = function(tree) {
     }
   }
 
-  console.log(candidates);
+  // console.log(candidates);
   blackboard.set('bombCandidates', candidates, true);
 
   return SUCCESS;

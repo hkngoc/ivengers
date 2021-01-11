@@ -38,7 +38,7 @@ TargetBonusStillGood.prototype.tick = function(tree) {
     return FAILURE;
   }
 
-  blackboard.set('targetCandidate', [candidates[index]], true);
+  blackboard.set('targetCandidate', [{ ...candidates[index], isLastResult: true, which }], true);
 
   return SUCCESS;
 };

@@ -17,7 +17,9 @@ import TargetBonusStillGood from './TargetBonusStillGood';
 import TargetSafeStillGood from './TargetSafeStillGood';
 import KeepOldTarget from './KeepOldTarget';
 import HasTarget from './HasTarget';
+import IsOldTarget from './IsOldTarget';
 import VoteTargetToCompareWithBomb from './VoteTargetToCompareWithBomb';
+import VoteBombWithBonusCompare from './VoteBombWithBonusCompare';
 import VoteBonusToCompareWithBomb from './VoteBonusToCompareWithBomb';
 import HasTargetToCompareWithBomb from './HasTargetToCompareWithBomb';
 import TargetSuitableWithBonus from './TargetSuitableWithBonus';
@@ -88,7 +90,9 @@ export {
 
   FindBombCandidate,
   HasBombCandidate,
+  IsOldTarget,
   TargetSuitableWithBomb,
+  VoteBombWithBonusCompare,
   VoteBombWithTarget,
   VoteBombWithTargetCompare,
   MoveToDropBombWithTarget,

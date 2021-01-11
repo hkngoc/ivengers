@@ -48,7 +48,6 @@ First.prototype.buildTree = function() {
           new Sequence({
             name: 'Eat',
             children: [
-              new NODES.HasBonusCandidate(this),
               new Priority({
                 children: [
                   new Sequence({
@@ -57,7 +56,12 @@ First.prototype.buildTree = function() {
                       new NODES.HasTarget(this),
                       new Priority({
                         children: [
-                          new NODES.TargetBonusStillGood(this),
+                          new Sequence({
+                            children: [
+                              new NODES.HasBonusCandidate(this),
+                              new NODES.TargetBonusStillGood(this),
+                            ]
+                          }),
                           new NODES.TargetSafeStillGood(this)
                         ]
                       }),
@@ -76,25 +80,23 @@ First.prototype.buildTree = function() {
                   }),
                   new Sequence({
                     children: [
-                      new NODES.HasBombCandidate(this),
-                      new NODES.VoteBonusToCompareWithBomb(this)
-                      // new Priority({
-                      //   children: [
-                      //     new Sequence({
-                      //       children: [
-                      //         new NODES.NoBombLeft(this),
-                      //         new NODES.VoteBonus(this),
-                      //         new NODES.MoveToBonus(this)
-                      //       ]
-                      //     }),
-                      //   ]
-                      // })
-                    ]
-                  }),
-                  new Sequence({
-                    children: [
-                      new NODES.VoteBonus(this),
-                      new NODES.MoveToBonus(this)
+                      new NODES.HasBonusCandidate(this),
+                      new Priority({
+                        children: [
+                          new Sequence({
+                            children: [
+                              new NODES.HasBombCandidate(this),
+                              new NODES.VoteBonusToCompareWithBomb(this)
+                            ]
+                          }),
+                          new Sequence({
+                            children: [
+                              new NODES.VoteBonus(this),
+                              new NODES.MoveToBonus(this)
+                            ]
+                          })
+                        ]
+                      })
                     ]
                   })
                 ]
@@ -112,8 +114,17 @@ First.prototype.buildTree = function() {
                   new Sequence({
                     children: [
                       new NODES.HasTargetToCompareWithBomb(this),
-                      new NODES.VoteBombWithTargetCompare(this),
-                      new NODES.MoveToDropBomb(this)
+                      new Priority({
+                        children: [
+                          new Sequence({
+                            children: [
+                              new NODES.IsOldTarget(this),
+                              new NODES.VoteBombWithTargetCompare(this)
+                            ]
+                          }),
+                          new NODES.VoteBombWithBonusCompare(this)
+                        ]
+                      })
                     ]
                   }),
                   new Sequence({

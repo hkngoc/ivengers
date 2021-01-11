@@ -19,7 +19,7 @@ IsNotSafe.prototype.tick = function(tree) {
   const { id, currentPosition: { col:x, row: y } } = player;
 
   const node = grid.getNodeAt(x, y);
-  const isSafe = this.isSafePlace(node);
+  const isSafe = this.isSafePlace(node, id);
 
   return isSafe ? FAILURE : SUCCESS;
 };

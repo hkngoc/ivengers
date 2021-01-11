@@ -64,8 +64,8 @@ UpdateGrid.prototype.travelGrid = function(playerId, pos, grid) {
     for (const neighbor of neighbors) {
 
       // really walkable under bomb flame remain
-      const scoreProfit = this.ref.scoreForWalk(playerId, node, neighbor, grid, nextTravelCost);
-      const walkable = this.canPlayerWalk(playerId, node, neighbor, grid, nextTravelCost, 0, 200, false, scoreProfit);
+      const { score: scoreProfit, merged: mergeProfit } = this.ref.scoreForWalk(playerId, node, neighbor, grid, nextTravelCost);
+      const walkable = this.canPlayerWalk(playerId, node, neighbor, grid, nextTravelCost, 0, 200, false, mergeProfit);
 
       if (neighbor.closed || !walkable) {
         continue;
@@ -81,7 +81,7 @@ UpdateGrid.prototype.travelGrid = function(playerId, pos, grid) {
         neighbor.f = ng;
         neighbor.parent = node;
         neighbor.travelCost = nextTravelCost ;
-        neighbor.scoreProfit = this.ref.mergeProfit(node.scoreProfit, scoreProfit)
+        neighbor.scoreProfit = mergeProfit;
 
         if (!neighbor.opened) {
           neighbor.opened = true;
@@ -118,7 +118,7 @@ UpdateGrid.prototype.tryPlaceBomb = function(playerId, pos, grid) {
   const profit = this.ref.drawBombFlames(tempBomb, grid, this.ref.updateFlameFunction, 'tempFlameRemain');
 
   // check where can find safe place/path
-  const safe = this.canPlayerWalk(playerId, pos, pos, grid, travelCost, 0, 400, true) && this.findSafePlace(playerId, pos, grid);
+  const safe = this.ref.canPlayerWalkByFlame(playerId, pos, pos, grid, travelCost, 0, 400, true) && this.findSafePlace(playerId, pos, grid);
   // const safe = this.findSafePlace(playerId, pos, grid);
   profit.safe = safe;
 
@@ -156,7 +156,8 @@ UpdateGrid.prototype.findSafePlace = function(playerId, pos, grid) {
         continue;
       }
 
-      const walkable = this.canPlayerWalk(playerId, node, neighbor, grid, nextTravelCost, preCost);
+      const { /*score,*/ merged: mergeProfit } = this.ref.scoreForWalk(playerId, node, neighbor, grid, nextTravelCost);
+      const walkable = this.canPlayerWalk(playerId, node, neighbor, grid, nextTravelCost, preCost, 200, true, mergeProfit);
       if (walkable) {
         openList.push(neighbor);
         neighbor.safeOpened = true;

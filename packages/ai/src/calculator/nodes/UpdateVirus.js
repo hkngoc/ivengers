@@ -24,7 +24,7 @@ UpdateVirus.prototype.tick = function(tree) {
 };
 
 UpdateVirus.prototype.drawPath = function(virus, grid, fn) {
-  const { position, direction } = virus;
+  const { position, direction, index } = virus;
   const { col, row } = position;
 
   let directs = {};
@@ -33,7 +33,7 @@ UpdateVirus.prototype.drawPath = function(virus, grid, fn) {
     directs[this.ref.getDirectOf(direction)] = pos;
   }
 
-  fn.apply(this, [pos, grid, 0]);
+  fn.apply(this, [pos, grid, 0, index]);
   let step = 1;
   while (_.keys(directs).length > 0) {
     for (const direct in directs) {
@@ -45,7 +45,7 @@ UpdateVirus.prototype.drawPath = function(virus, grid, fn) {
         directs = _.omit(directs, direct);
       } else {
         // update grid at near
-        fn.apply(this, [near, grid, step]);
+        fn.apply(this, [near, grid, step, index]);
 
         directs[direct] = near;
       }
@@ -55,11 +55,11 @@ UpdateVirus.prototype.drawPath = function(virus, grid, fn) {
   }
 };
 
-UpdateVirus.prototype.updateFn = function(pos, grid, step, which = 'virusTravel') {
+UpdateVirus.prototype.updateFn = function(pos, grid, step, index, which = 'virusTravel') {
   const { x, y } = pos;
 
   const node = grid.getNodeAt(x, y);
-  node[which] = [ ...(node[which] || []), step ];
+  node[which] = [ ...(node[which] || []), { step, index } ];
 };
 
 export default UpdateVirus;

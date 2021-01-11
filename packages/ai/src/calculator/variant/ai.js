@@ -116,7 +116,12 @@ AI.prototype.drawBombFlames = function(bomb, grid, fn, which) {
 AI.prototype.mergeProfit = function(left, right) {
   return _.mergeWith.apply(_, [{...left}].concat([{...right}], (obj, src, key) => {
     if (Array.isArray(src)) {
-      return [ ...(obj || []), ...src ];
+      const merged =  [ ...(obj || []), ...src ];
+      if (key == 'virus' || key == 'human') {
+        return _.uniqBy(merged, 'index');
+      } else {
+        return merged;
+      }
     }
     return (obj || 0) + src;
   }));
@@ -189,17 +194,16 @@ AI.prototype.scoreForWalk = function(playerId, node, neighbor, grid, travelCost,
   const right = travelTime + tpc/2;
 
   const vtpc = this.timeToCrossACell('virus');
-  let virus = 0;
-  for (const step of virusTravel) {
+  for (const v of virusTravel) {
+    const { index, step } = v;
     const vTravelTime = step * vtpc;
     const vLeft       = vTravelTime - vtpc/2 - offset;
     const vRight      = vTravelTime + vtpc/2 + offset
 
     if ((vLeft < left && left < vRight) || (vLeft < right && right < vRight)) {
-      virus++;
+      score['virus'] = [ ...score['virus'] || [], v ];
     }
   }
-  score['virus'] = virus;
 
   const htpc = this.timeToCrossACell('human');
 
@@ -211,12 +215,15 @@ AI.prototype.scoreForWalk = function(playerId, node, neighbor, grid, travelCost,
     const hRight      = hTravelTime + htpc/2 + offset;
 
     if ((hLeft < left && left < hRight) || (hLeft < right && right < hRight)) {
-      human++;
+      score['human'] = [ ...score['human'] || [], h ];
     }
   }
-  score['human'] = human;
 
-  return score;
+  const { scoreProfit = {} } = node;
+  return {
+    score,
+    merged: this.mergeProfit(scoreProfit, score)
+  };
 };
 
 AI.prototype.safeScoreForWalk = function(playerId, node, neighbor, travelCost) {
@@ -311,17 +318,15 @@ AI.prototype.canPlayerWalkByFlame = function(playerId, node, neighbor, grid, cos
   return safe;
 };
 
-AI.prototype.canPlayerWalkBySarsCov = function(playerId, node, neighbor, grid, cost, preCost = 0, offset = 200, byPassParam, profit) {
+AI.prototype.canPlayerWalkBySarsCov = function(playerId, node, neighbor, grid, cost, preCost = 0, offset = 200, byPassParam, profit = {}) {
   const tpc = this.timeToCrossACell(playerId);
   const travelTime = tpc * cost;
 
   /* check travel time with virus, human infected */
   const passive = this.playerPassiveNumber(playerId);
+  const { virus = [], human = [] } = profit;
 
-  const { scoreProfit: { virus = 0, human = 0 } } = node;
-  const { virus: nextVirus = 0, human: nextHuman = 0 } = profit;
-
-  if (passive < virus + human + nextVirus + nextHuman) {
+  if (passive < virus.length + human.length) {
     return false;
   }
 
@@ -359,14 +364,14 @@ AI.prototype.tracePath = function(pos, grid) {
 };
 
 AI.prototype.countingScore = function(obj) {
-  const { box = 0, enemy = 0, gifts = [], spoils = [], virus = 0, human = 0 } = obj;
+  const { box = 0, enemy = 0, gifts = [], spoils = [], virus = [], human = [] } = obj;
 
   let score = 0;
 
   score = score + 1 * box;
   score = score + 0 * enemy; // disable to debug
-  // score = score + 1 * virus;
-  // score = score + 1 * human;
+  score = score + 1 * virus.length;
+  score = score + 1 * human.length;
   score = score + 1 * gifts.length; // can be score by type of gift or spoil...
   score = score + 1 * spoils.length; // 5: pill; 4: power
 
