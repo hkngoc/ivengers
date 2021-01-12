@@ -12,6 +12,7 @@ import CalculateEmpty from './CalculateEmpty';
 
 import FindBonusCandidate from './FindBonusCandidate';
 import HasBonusCandidate from './HasBonusCandidate';
+import IsNearTeleport from './IsNearTeleport';
 
 import TargetBonusStillGood from './TargetBonusStillGood';
 import TargetSafeStillGood from './TargetSafeStillGood';
@@ -69,6 +70,8 @@ export {
 
   CalculateEmpty,
   CalculateBombDelay,
+
+  IsNearTeleport,
 
   TargetBonusStillGood,
   TargetSafeStillGood,

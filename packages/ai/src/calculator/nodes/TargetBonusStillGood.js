@@ -31,9 +31,9 @@ TargetBonusStillGood.prototype.tick = function(tree) {
   // }
 
   const { directs: rDirects } = lastResult;
-  const { directs } = this.ref.tracePath(position, grid);
+  const { directs, positions } = this.ref.tracePath(position, grid);
 
-  if (!rDirects.endsWith(directs)) {
+  if (!rDirects.endsWith(directs) && !this.ref.checkPathCanWalk(positions)) {
     // not same path
     return FAILURE;
   }

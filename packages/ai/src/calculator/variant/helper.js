@@ -162,6 +162,48 @@ CustomGrid.prototype.getNeighbors = function(node, diagonalMovement, playerNumbe
   return neighbors;
 };
 
+CustomGrid.prototype.getAllNeighbors = function(node) {
+  const { x, y } = node;
+  const neighbors = [];
+  const nodes = this.nodes;
+
+  // ↑
+  if (this.isInside(x, y - 1,)) {
+    neighbors.push(nodes[y - 1][x]);
+  }
+  // →
+  if (this.isInside(x + 1, y)) {
+    neighbors.push(nodes[y][x + 1]);
+  }
+  // ↓
+  if (this.isInside(x, y + 1)) {
+    neighbors.push(nodes[y + 1][x]);
+  }
+  // ←
+  if (this.isInside(x - 1, y)) {
+    neighbors.push(nodes[y][x - 1]);
+  }
+
+  // ↖
+  if (this.isInside(x - 1, y - 1)) {
+      neighbors.push(nodes[y - 1][x - 1]);
+  }
+  // ↗
+  if (this.isInside(x + 1, y - 1)) {
+      neighbors.push(nodes[y - 1][x + 1]);
+  }
+  // ↘
+  if (this.isInside(x + 1, y + 1)) {
+      neighbors.push(nodes[y + 1][x + 1]);
+  }
+  // ↙
+  if (this.isInside(x - 1, y + 1)) {
+      neighbors.push(nodes[y + 1][x - 1]);
+  }
+
+  return neighbors;
+}
+
 CustomGrid.prototype.wouldStopFlameAt = function(x, y, remainTime) {
   if (this.isInside(x, y)) {
     if (this.nodes[y][x].value == 1) {

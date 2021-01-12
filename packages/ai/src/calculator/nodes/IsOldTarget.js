@@ -18,7 +18,7 @@ IsOldTarget.prototype.tick = function(tree) {
   const key = blackboard.get('compareWithBomb', true);
   const compare = blackboard.get(key, true);
 
-  if (compare.length == 0 && compare[0].isLastResult) {
+  if (compare.length == 1 && compare[0].isLastResult) {
     return SUCCESS;
   }
 

@@ -169,7 +169,7 @@ AI.prototype.scoreForBombing = function(playerId, pos, grid, remainTime) {
   return score;
 };
 
-AI.prototype.scoreForWalk = function(playerId, node, neighbor, grid, travelCost, offset = 100) {
+AI.prototype.scoreForWalk = function(playerId, node, neighbor, grid, travelCost, offset = 100, scoreProfit = {}) {
   const { map_info: { gifts, spoils } } = this.map;
 
   const { x, y, virusTravel = [], humanTravel = [] } = neighbor;
@@ -195,7 +195,12 @@ AI.prototype.scoreForWalk = function(playerId, node, neighbor, grid, travelCost,
 
   const vtpc = this.timeToCrossACell('virus');
   for (const v of virusTravel) {
-    const { index, step } = v;
+    const { index, step, main = false } = v;
+
+    if (!main) {
+      continue;
+    }
+
     const vTravelTime = step * vtpc;
     const vLeft       = vTravelTime - vtpc/2 - offset;
     const vRight      = vTravelTime + vtpc/2 + offset
@@ -209,7 +214,12 @@ AI.prototype.scoreForWalk = function(playerId, node, neighbor, grid, travelCost,
 
   let human = 0;
   for (const h of humanTravel) {
-    const { step, curedRemainTime = 0 } = h;
+    const { step, curedRemainTime = 0, main = false } = h;
+
+    if (!main) {
+      continue;
+    }
+
     const hTravelTime = curedRemainTime + step * htpc;
     const hLeft       = hTravelTime - htpc/2 - offset;
     const hRight      = hTravelTime + htpc/2 + offset;
@@ -219,7 +229,7 @@ AI.prototype.scoreForWalk = function(playerId, node, neighbor, grid, travelCost,
     }
   }
 
-  const { scoreProfit = {} } = node;
+  // const { scoreProfit = {} } = node;
   return {
     score,
     merged: this.mergeProfit(scoreProfit, score)
@@ -282,14 +292,14 @@ AI.prototype.acceptFlame = function(remain, cost, preCost, tpc, offset) {
   // flame time = 400ms
   // offset = 200
 
-  if ((travelTime - tpc/2 > remain + 400 + offset) || (travelTime + tpc/2 < remain - offset)) {
+  if ((travelTime - tpc/2 > remain + 400 + offset * 1.2) || (travelTime + tpc/2 < remain - offset)) {
     return true;
   } else {
     return false;
   }
 };
 
-AI.prototype.canPlayerWalkByFlame = function(playerId, node, neighbor, grid, cost, preCost = 0, offset = 200, includeTemp = true) {
+AI.prototype.canPlayerWalkByFlame = function(playerId, node, neighbor, grid, cost, preCost = 0, offset = 300, includeTemp = true) {
   const tpc = this.timeToCrossACell(playerId);
   const travelTime = tpc * cost;
 
@@ -318,7 +328,7 @@ AI.prototype.canPlayerWalkByFlame = function(playerId, node, neighbor, grid, cos
   return safe;
 };
 
-AI.prototype.canPlayerWalkBySarsCov = function(playerId, node, neighbor, grid, cost, preCost = 0, offset = 200, byPassParam, profit = {}) {
+AI.prototype.canPlayerWalkBySarsCov = function(playerId, node, neighbor, grid, cost, preCost = 0, offset = 300, byPassParam, profit = {}) {
   const tpc = this.timeToCrossACell(playerId);
   const travelTime = tpc * cost;
 
@@ -331,6 +341,50 @@ AI.prototype.canPlayerWalkBySarsCov = function(playerId, node, neighbor, grid, c
   }
 
   return true;
+};
+
+AI.prototype.checkPathCanWalk = function(positions) {
+  const { map: { myId }, grid }= this;
+
+  const index = _.findLastIndex(positions, p => p.visited == true);
+
+  let wakable = true;
+  let travelCost = 1;
+  let profit = {};
+  for (let i = index; i < positions.length - 1; i++) {
+    const node = positions[i];
+    const neighbor = positions[i+1];
+
+    const { score, merged } = this.scoreForWalk(myId, node, neighbor, grid, travelCost, 100, profit);
+    wakable = this.canPlayerWalkByFlame(
+      myId,
+      grid.getNodeAt(node.x, node.y),
+      grid.getNodeAt(neighbor.x, neighbor.y),
+      grid,
+      travelCost,
+      0,
+      300,
+      false
+    ) && this.canPlayerWalkBySarsCov(
+      myId,
+      grid.getNodeAt(node.x, node.y),
+      grid.getNodeAt(neighbor.x, neighbor.y),
+      grid,
+      travelCost,
+      0,
+      300,
+      false,
+      {}
+    )
+    profit = merged;
+    travelCost++;
+
+    if (!wakable) {
+      break;
+    }
+  }
+
+  return wakable;
 };
 
 AI.prototype.tracePath = function(pos, grid) {
@@ -368,12 +422,12 @@ AI.prototype.countingScore = function(obj) {
 
   let score = 0;
 
-  score = score + 1 * box;
-  score = score + 0 * enemy; // disable to debug
-  score = score + 1 * virus.length;
-  score = score + 1 * human.length;
-  score = score + 1 * gifts.length; // can be score by type of gift or spoil...
-  score = score + 1 * spoils.length; // 5: pill; 4: power
+  score = score + 1.0 * box;
+  score = score + 0.5 * enemy; // disable to debug
+  score = score + 0.5 * virus.length;
+  score = score + 0.5 * human.length;
+  score = score + 1.5 * gifts.length; // can be score by type of gift or spoil...
+  score = score + 1.5 * spoils.length; // 5: pill; 4: power
 
   return score;
 };
@@ -402,13 +456,13 @@ AI.prototype.roundScore = function(score) {
 
 AI.prototype.extremeFn = function(score, cost) {
   if (cost <= 0) {
-    cost = 0.8;
+    cost = 0.7;
   }
 
   if (cost > 1) {
     // cost = cost - 0.5;
     cost = cost * 0.85;
-    cost = Math.sqrt(cost);
+    cost = Math.pow(cost, 6/10);
     // cost = cost * 0.9;
   }
 

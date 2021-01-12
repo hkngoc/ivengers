@@ -64,8 +64,8 @@ UpdateGrid.prototype.travelGrid = function(playerId, pos, grid) {
     for (const neighbor of neighbors) {
 
       // really walkable under bomb flame remain
-      const { score: scoreProfit, merged: mergeProfit } = this.ref.scoreForWalk(playerId, node, neighbor, grid, nextTravelCost);
-      const walkable = this.canPlayerWalk(playerId, node, neighbor, grid, nextTravelCost, 0, 200, false, mergeProfit);
+      const { score: scoreProfit, merged: mergeProfit } = this.ref.scoreForWalk(playerId, node, neighbor, grid, nextTravelCost, 100, node.scoreProfit);
+      const walkable = this.canPlayerWalk(playerId, node, neighbor, grid, nextTravelCost, 0, 300, false, mergeProfit);
 
       if (neighbor.closed || !walkable) {
         continue;
@@ -156,8 +156,8 @@ UpdateGrid.prototype.findSafePlace = function(playerId, pos, grid) {
         continue;
       }
 
-      const { /*score,*/ merged: mergeProfit } = this.ref.scoreForWalk(playerId, node, neighbor, grid, nextTravelCost);
-      const walkable = this.canPlayerWalk(playerId, node, neighbor, grid, nextTravelCost, preCost, 200, true, mergeProfit);
+      const { /*score,*/ merged: mergeProfit } = this.ref.scoreForWalk(playerId, node, neighbor, grid, nextTravelCost, 100, node.scoreProfit);
+      const walkable = this.canPlayerWalk(playerId, node, neighbor, grid, nextTravelCost, preCost, 300, true, mergeProfit,);
       if (walkable) {
         openList.push(neighbor);
         neighbor.safeOpened = true;

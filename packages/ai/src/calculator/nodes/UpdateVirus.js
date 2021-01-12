@@ -4,7 +4,7 @@ import {
 
 import { newChildObject } from '../../utils';
 import MyBaseNode from './MyBaseNode';
-import { Pos } from '../variant/helper';
+import { Pos, Direct } from '../variant/helper';
 
 const UpdateVirus = function(ref) {
   MyBaseNode.apply(this, [ref]);
@@ -29,9 +29,12 @@ UpdateVirus.prototype.drawPath = function(virus, grid, fn) {
 
   let directs = {};
   const pos = new Pos(col, row);
-  if (direction) {
-    directs[this.ref.getDirectOf(direction)] = pos;
-  }
+  directs[Direct.LEFT] = pos;
+  directs[Direct.RIGHT] = pos;
+  directs[Direct.UP] = pos;
+  directs[Direct.DOWN] = pos;
+
+  const mainDirect = this.ref.getDirectOf(direction);
 
   fn.apply(this, [pos, grid, 0, index]);
   let step = 1;
@@ -40,12 +43,12 @@ UpdateVirus.prototype.drawPath = function(virus, grid, fn) {
       const p = directs[direct];
       const near = p.adj(direct);
 
-      const stop = grid.wouldStopVirusAt(near.x, near.y);
+      const stop = (direct == mainDirect && grid.wouldStopVirusAt(near.x, near.y)) || (direct != mainDirect && (step > 3 || grid.wouldStopVirusAt(near.x, near.y)));
       if (stop) {
         directs = _.omit(directs, direct);
       } else {
         // update grid at near
-        fn.apply(this, [near, grid, step, index]);
+        fn.apply(this, [near, grid, step, index, direct == mainDirect]);
 
         directs[direct] = near;
       }
@@ -55,11 +58,11 @@ UpdateVirus.prototype.drawPath = function(virus, grid, fn) {
   }
 };
 
-UpdateVirus.prototype.updateFn = function(pos, grid, step, index, which = 'virusTravel') {
+UpdateVirus.prototype.updateFn = function(pos, grid, step, index, main, which = 'virusTravel') {
   const { x, y } = pos;
 
   const node = grid.getNodeAt(x, y);
-  node[which] = [ ...(node[which] || []), { step, index } ];
+  node[which] = [ ...(node[which] || []), { step, index, main } ];
 };
 
 export default UpdateVirus;

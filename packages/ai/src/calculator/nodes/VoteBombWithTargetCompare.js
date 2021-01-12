@@ -21,20 +21,33 @@ VoteBombWithTargetCompare.prototype.tick = function(tree) {
   const compare = blackboard.get(key, true);
   const target = _.first(compare);
   const candidates = blackboard.get('bombCandidates', true);
-
-  const index = _.findIndex(candidates, candidate => candidate.position.x == target.position.x && candidate.position.y == target.position.y);
+  const nearTeleport = blackboard.get('nearTeleport', true);
+  const isSafe = blackboard.get('isSafe', true);
+  
 
   let accept = false;
-  if (index >= 0) {
-    if (index <= Math.round(candidates.length / 2.0)) {
-      accept = true;
-    }
-  } else {
-    const ordered = _.orderBy(candidates, ['extreme', 'score', 'cost'], ['desc', 'desc', 'asc']);
-    const best = _.first(ordered);
 
-    if (target.extreme > 1.5 * best.extreme) {
-      accept = true;
+  if (!nearTeleport && isSafe) {
+    const index = _.findIndex(candidates, candidate => candidate.position.x == target.position.x && candidate.position.y == target.position.y);
+
+    if (index >= 0) {
+      if (index <= Math.round(candidates.length / 2.0)) {
+        accept = true;
+      }
+
+      // if (target.which == 'safe') {
+      //   accept = true;
+      // }
+    } else {
+      const ordered = _.orderBy(candidates, ['extreme', 'score', 'cost'], ['desc', 'desc', 'asc']);
+      const best = _.first(ordered);
+
+      if (target.travelCost <= 5 || target.extreme > 0.8 * best.extreme) {
+        accept = true;
+      }
+      // if (target.which == 'safe') {
+      //   accept = true;
+      // }
     }
   }
 
@@ -42,6 +55,7 @@ VoteBombWithTargetCompare.prototype.tick = function(tree) {
   if (accept) {
     const { lastResult } = this.ref;
     blackboard.set('result', { ...lastResult, watch: true }, true);
+    return SUCCESS;
   }
 
   return FAILURE;

@@ -40,7 +40,9 @@ First.prototype.buildTree = function() {
         children: [
           new NODES.FindBombCandidate(this),
           new NODES.FindBonusCandidate(this),
-          new NODES.FindSafePlace(this) // find fully safe place
+          new NODES.FindSafePlace(this),
+          new NODES.IsNearTeleport(this),
+          new NODES.IsNotSafe(this),
         ]
       }),
       new Priority({

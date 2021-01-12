@@ -80,11 +80,11 @@ FindBombCandidate.prototype.conditionFn = function(node, tpc, remain) {
   const travelTime = tpc * travelCost;
 
   const ff = _(flameRemain)
-    .map(f => f - travelTime)
+    .map(f => f + 400 + tpc/2 + 300 - travelTime)
     .filter(f => f > 0)
     .value();
 
-  if (ff.length > 0 && travelTime < remain) {
+  if (ff.length > 0/* && travelTime < remain + 50*/) {
     // that pos not safe and move to that pos can not drop bomb immediately
     return false;
   }

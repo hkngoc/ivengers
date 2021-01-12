@@ -14,12 +14,15 @@ const IsNotSafe = function(ref) {
 IsNotSafe.prototype = newChildObject(MyBaseNode.prototype);
 
 IsNotSafe.prototype.tick = function(tree) {
-  const { grid } = this.ref;
+  const { grid, blackboard } = this.ref;
   const player = this.ref.getMyPlayer();
   const { id, currentPosition: { col:x, row: y } } = player;
 
   const node = grid.getNodeAt(x, y);
   const isSafe = this.isSafePlace(node, id);
+
+  blackboard.set('isSafe', isSafe, true);
+  // console.log('isSafe', isSafe);
 
   return isSafe ? FAILURE : SUCCESS;
 };
@@ -32,14 +35,10 @@ IsNotSafe.prototype.isSafePlace = function(node, playerId) {
     virusTravel = [],
   } = node;
 
-  if (flameRemain.length > 0) {
-    return false;
-  }
-
   const passive = this.ref.playerPassiveNumber(playerId);
-  const scareCount = _.filter([...humanTravel, ...virusTravel], step => step == 1);
+  const scareCount = _.filter([...humanTravel, ...virusTravel], o => (o.step > 0 && o.main) || (o.step <= 2));
 
-  if (passive < scareCount) {
+  if (flameRemain.length > 0 || passive < scareCount.length) {
     return false;
   }
 

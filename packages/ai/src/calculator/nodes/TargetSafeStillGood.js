@@ -26,14 +26,11 @@ TargetSafeStillGood.prototype.tick = function(tree) {
   if (index < 0) {
     return FAILURE;
   }
-  // if (index < 0 || (index >= 0 && candidates.length > 10 && index > candidates.length / 3)) {
-  //   return FAILURE;
-  // }
 
   const { directs: rDirects } = lastResult;
-  const { directs } = this.ref.tracePath(position, grid);
+  const { directs, positions } = this.ref.tracePath(position, grid);
 
-  if (!rDirects.endsWith(directs)) {
+  if (!rDirects.endsWith(directs) && !this.ref.checkPathCanWalk(positions)) {
     // not same path
     return FAILURE;
   }
