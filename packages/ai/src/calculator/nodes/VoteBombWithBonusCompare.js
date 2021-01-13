@@ -29,12 +29,14 @@ VoteBombWithBonusCompare.prototype.tick = function(tree) {
   const bonusOrdered = _.orderBy(compare, ['extreme', 'score', 'cost'], ['desc', 'desc', 'asc']);
   const bestBonus = _.first(bonusOrdered);
 
-  // const nearBomb = _.filter(bombOrdered, candidate => candidate.cost <= 1);
-  // if (nearBomb.length > 0) {
-  //   const bestNear = _.first(nearBomb);
-  //   blackboard.set('bombWinner', bestNear, true);
-  //   return SUCCESS;
-  // }
+  const nearBomb = _.filter(bombOrdered, candidate => candidate.cost <= 1);
+  if (nearBomb.length > 0) {
+    const bestNear = _.first(nearBomb);
+    if (bestNear.extreme > 0.5 * bestBonus.extreme) {
+      blackboard.set('bombWinner', bestNear, true);
+      return SUCCESS;
+    }
+  }
   if (bestBomb.travelCost <= 1 && remain < tpc) {
     // move to drop bomb
     blackboard.set('bombWinner', bestBomb, true);

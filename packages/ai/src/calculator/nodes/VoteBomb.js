@@ -20,12 +20,17 @@ VoteBomb.prototype.tick = function(tree) {
   const candidates = blackboard.get('bombCandidates', true);
 
   const ordered = _.orderBy(candidates, ['extreme', 'score', 'cost'], ['desc', 'desc', 'asc']);
+  const winner = _.first(ordered);
   // need reject position can drop bomb but remain time so small, that more safer. Maybe implement in Find Candidate node.
 
-  const winner = _.first(ordered);
-  // console.log(ordered, winner);
+  const near = _.find(ordered, candidate => candidate.cost == 0);
+  console.log(ordered, winner, near);
 
-  blackboard.set('bombWinner', winner, true);
+  if (near && near.extreme > 0.3 * winner.extreme && winner.cost >= 5) {
+    blackboard.set('bombWinner', near, true);
+  } else {
+    blackboard.set('bombWinner', winner, true);
+  }
 
   return SUCCESS;
 };

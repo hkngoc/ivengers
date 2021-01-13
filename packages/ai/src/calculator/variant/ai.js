@@ -444,7 +444,7 @@ AI.prototype.scoreForSpoils = function(spoils) {
     .map(spoil => {
       switch (spoil) {
         case 5:
-          return 4.0;
+          return 3.0;
         case 4:
           return 1.0;
         default:
