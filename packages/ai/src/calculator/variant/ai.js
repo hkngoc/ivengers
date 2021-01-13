@@ -197,10 +197,6 @@ AI.prototype.scoreForWalk = function(playerId, node, neighbor, grid, travelCost,
   for (const v of virusTravel) {
     const { index, step, main = false } = v;
 
-    if (!main) {
-      continue;
-    }
-
     const vTravelTime = step * vtpc;
     const vLeft       = vTravelTime - vtpc/2 - offset;
     const vRight      = vTravelTime + vtpc/2 + offset
@@ -215,10 +211,6 @@ AI.prototype.scoreForWalk = function(playerId, node, neighbor, grid, travelCost,
   let human = 0;
   for (const h of humanTravel) {
     const { step, curedRemainTime = 0, main = false } = h;
-
-    if (!main) {
-      continue;
-    }
 
     const hTravelTime = curedRemainTime + step * htpc;
     const hLeft       = hTravelTime - htpc/2 - offset;

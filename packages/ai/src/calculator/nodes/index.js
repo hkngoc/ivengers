@@ -1,4 +1,5 @@
 import FilterEvent from './FilterEvent';
+import CheckWinner from './CheckWinner';
 
 import SyncData from './SyncData';
 import UpdateFlame from './UpdateFlame';
@@ -59,6 +60,7 @@ export {
   SequenceAlwaysSuccess,
 
   FilterEvent,
+  CheckWinner,
 
   SyncData,
 

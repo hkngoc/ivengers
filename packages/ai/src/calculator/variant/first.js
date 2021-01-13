@@ -124,7 +124,27 @@ First.prototype.buildTree = function() {
                               new NODES.VoteBombWithTargetCompare(this)
                             ]
                           }),
-                          new NODES.VoteBombWithBonusCompare(this)
+                          new Sequence({
+                            children: [
+                              new NODES.VoteBombWithBonusCompare(this),
+                              new Priority({
+                                children: [
+                                  new Sequence({
+                                    children: [
+                                      new NODES.CheckWinner(this, 'bonusWinner'),
+                                      new NODES.MoveToBonus(this),
+                                    ]
+                                  }),
+                                  new Sequence({
+                                    children: [
+                                      new NODES.CheckWinner(this, 'bombWinner'),
+                                      new NODES.MoveToDropBomb(this)
+                                    ]
+                                  })
+                                ]
+                              })
+                            ]
+                          })
                         ]
                       })
                     ]
