@@ -15,20 +15,11 @@ const VoteBombWithBonusCompare = function(ref) {
 VoteBombWithBonusCompare.prototype = newChildObject(MyBaseNode.prototype);
 
 VoteBombWithBonusCompare.prototype.tick = function(tree) {
-  // const { blackboard, grid } = this.ref;
+  const { blackboard } = this.ref;
 
-  // const key = blackboard.get('compareWithBomb', true);
-  // const compare = blackboard.get(key, true);
-  // const ordered = _.orderBy(compare, ['extreme', 'score', 'cost'], ['desc', 'desc', 'asc']);
+  const key = blackboard.get('compareWithBomb', true);
+  const compare = blackboard.get(key, true);
 
-  // // need more implement to pick the best or not
-  // const winner =  _.first(ordered);
-
-  // const { position } = winner;
-  // const { directs, positions } = this.ref.tracePath(position, grid);
-  // blackboard.set('result', { directs, positions, winner, which: 'bonus' }, true);
-
-  // return SUCCESS;
   return FAILURE;
 };
 

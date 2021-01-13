@@ -118,8 +118,9 @@ UpdateGrid.prototype.tryPlaceBomb = function(playerId, pos, grid) {
   const profit = this.ref.drawBombFlames(tempBomb, grid, this.ref.updateFlameFunction, 'tempFlameRemain');
 
   // check where can find safe place/path
-  const safe = this.ref.canPlayerWalkByFlame(playerId, pos, pos, grid, travelCost, 0, 400, true) && this.findSafePlace(playerId, pos, grid);
-  // const safe = this.findSafePlace(playerId, pos, grid);
+  // this below check make bot has a new bug about new target better than current
+  // const safe = this.ref.canPlayerWalkByFlame(playerId, pos, pos, grid, travelCost, 0, 400, true) && this.findSafePlace(playerId, pos, grid);
+  const safe = this.findSafePlace(playerId, pos, grid);
   profit.safe = safe;
 
   // reverse state

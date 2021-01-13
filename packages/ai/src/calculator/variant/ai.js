@@ -292,7 +292,7 @@ AI.prototype.acceptFlame = function(remain, cost, preCost, tpc, offset) {
   // flame time = 400ms
   // offset = 200
 
-  if ((travelTime - tpc/2 > remain + 400 + offset * 1.2) || (travelTime + tpc/2 < remain - offset)) {
+  if ((travelTime - tpc/2 > remain + 400 + offset * 1.5) || (travelTime + tpc/2 < remain - offset)) {
     return true;
   } else {
     return false;
@@ -374,7 +374,7 @@ AI.prototype.checkPathCanWalk = function(positions) {
       0,
       300,
       false,
-      {}
+      profit
     )
     profit = merged;
     travelCost++;
@@ -385,6 +385,36 @@ AI.prototype.checkPathCanWalk = function(positions) {
   }
 
   return wakable;
+};
+
+AI.prototype.checkPathInDanger = function(positions) {
+  const { map: { myId }, grid }= this;
+
+  const index = _.findLastIndex(positions, p => p.visited == true);
+  const left = index >= 2 ? index - 2 : 0;
+
+  let profit = {};
+  let accept = true;
+  for (let i = left; i <= index; i++) {
+    const node = grid.getNodeAt(positions[i].x, positions[i].y);
+
+    const { flameRemain = [], humanTravel = [], virusTravel = [] } = node;
+    profit = this.mergeProfit(profit, { humanTravel, virusTravel });
+    if (flameRemain.length > 0) {
+      accept = false;
+      break;
+    }
+  }
+
+  if (accept) {
+    const passive = this.playerPassiveNumber(myId);
+    const { humanTravel = [], virusTravel = []} = profit;
+    if (passive < humanTravel.length + virusTravel) {
+      accept = false;
+    }
+  }
+
+  return accept;
 };
 
 AI.prototype.tracePath = function(pos, grid) {
@@ -417,17 +447,32 @@ AI.prototype.tracePath = function(pos, grid) {
   };
 };
 
+AI.prototype.scoreForSpoils = function(spoils) {
+  return _(spoils)
+    .map(spoil => {
+      switch (spoil) {
+        case 5:
+          return 4.0;
+        case 4:
+          return 1.0;
+        default:
+          return 0.5;
+      }
+    })
+    .sum();
+};
+
 AI.prototype.countingScore = function(obj) {
   const { box = 0, enemy = 0, gifts = [], spoils = [], virus = [], human = [] } = obj;
 
   let score = 0;
 
   score = score + 1.0 * box;
-  score = score + 0.5 * enemy; // disable to debug
+  score = score + 0.7 * enemy; // disable to debug
   score = score + 0.5 * virus.length;
   score = score + 0.5 * human.length;
-  score = score + 1.5 * gifts.length; // can be score by type of gift or spoil...
-  score = score + 1.5 * spoils.length; // 5: pill; 4: power
+  score = score + 1.8 * gifts.length; // can be score by type of gift or spoil...
+  score = score + this.scoreForSpoils(spoils);
 
   return score;
 };
@@ -451,7 +496,7 @@ AI.prototype.scoreFn = function(node) {
 };
 
 AI.prototype.roundScore = function(score) {
-  return +(Math.round(score + 'e+2') + 'e-2');
+  return +(Math.round(score + 'e+5') + 'e-5');
 };
 
 AI.prototype.extremeFn = function(score, cost) {

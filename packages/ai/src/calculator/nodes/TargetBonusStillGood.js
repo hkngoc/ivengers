@@ -26,9 +26,6 @@ TargetBonusStillGood.prototype.tick = function(tree) {
   if (index < 0) {
     return FAILURE;
   }
-  // if (index < 0 || (index >= 0 && candidates.length > 10 && index > candidates.length / 3)) {
-  //   return FAILURE;
-  // }
 
   const { directs: rDirects } = lastResult;
   const { directs, positions } = this.ref.tracePath(position, grid);
