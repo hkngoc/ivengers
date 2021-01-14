@@ -1,3 +1,5 @@
+import Logger from 'js-logger';
+
 import ai from '../calculator';
 import { throttle } from '../utils';
 
@@ -35,7 +37,8 @@ Brain.prototype.onDrive = function(data) {
 Brain.prototype.onCalculated = function(result) {
   this.lastResult = result;
 
-  console.log(result);
+  Logger.info('result', result);
+
   if (!result) {
     return;
   }

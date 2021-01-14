@@ -8,6 +8,7 @@ import {
 
 import Heap from 'heap';
 import _ from 'lodash';
+import Logger from 'js-logger';
 
 import { newChildObject } from '../../utils';
 import MyBaseNode from './MyBaseNode';
@@ -26,7 +27,7 @@ UpdateGrid.prototype.tick = function(tree) {
 
   this.travelGrid(id, { x, y }, grid);
 
-  console.log(grid);
+  Logger.debug(grid);
 
   return SUCCESS;
 };

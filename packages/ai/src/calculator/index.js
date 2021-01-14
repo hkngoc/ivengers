@@ -11,10 +11,12 @@ const wait = (amount) => {
 };
 
 const wrapper = async (...params) => {
-  // console.log(JSON.stringify(params));
-  // console.log(params);
-
   Logger.useDefaults();
+  Logger.setLevel(Logger.INFO);
+
+  // Logger.debug(JSON.stringify(params));
+  // Logger.debug(params);
+
   Logger.time('logic');
   const result = await new Promise((resolve) => {
     let ai = new AI(...params)

@@ -3,6 +3,8 @@ import {
   FAILURE
 } from 'behavior3js';
 
+import Logger from 'js-logger';
+
 import { newChildObject } from '../../utils';
 import MyBaseNode from './MyBaseNode';
 
@@ -16,7 +18,7 @@ MoveToBonusWithTarget.prototype.tick = function(tree) {
   const { blackboard } = this.ref;
   const winner = blackboard.get('bonusWinner', true);
 
-  // console.log(winner);
+  Logger.debug(winner);
 
   blackboard.set('result', winner, true);
 

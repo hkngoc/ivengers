@@ -57,6 +57,7 @@ AI.prototype.playerPassiveNumber = function(id) {
   const { map_info: { players: { [id]: player } } } = this.map;
   const { pill = 0, pillUsed = 0 } = player;
 
+  // return 0; // mock
   return pill;
 };
 

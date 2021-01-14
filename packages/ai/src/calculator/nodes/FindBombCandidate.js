@@ -3,6 +3,8 @@ import {
   FAILURE
 } from 'behavior3js';
 
+import Logger from 'js-logger';
+
 import { newChildObject } from '../../utils';
 import MyBaseNode from './MyBaseNode';
 
@@ -56,7 +58,7 @@ FindBombCandidate.prototype.tick = function(tree) {
     }
   }
 
-  // console.log(candidates);
+  Logger.debug(candidates);
   blackboard.set('bombCandidates', candidates, true);
 
   return SUCCESS;

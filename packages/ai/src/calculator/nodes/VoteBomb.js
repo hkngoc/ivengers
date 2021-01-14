@@ -4,6 +4,7 @@ import {
 } from 'behavior3js';
 
 import _ from 'lodash';
+import Logger from 'js-logger';
 
 import { newChildObject } from '../../utils';
 import MyBaseNode from './MyBaseNode';
@@ -24,7 +25,7 @@ VoteBomb.prototype.tick = function(tree) {
   // need reject position can drop bomb but remain time so small, that more safer. Maybe implement in Find Candidate node.
 
   const near = _.find(ordered, candidate => candidate.cost == 0);
-  console.log(ordered, winner, near);
+  Logger.debug(ordered, winner, near);
 
   if (near && near.extreme > 0.3 * winner.extreme && winner.cost >= 5) {
     blackboard.set('bombWinner', near, true);

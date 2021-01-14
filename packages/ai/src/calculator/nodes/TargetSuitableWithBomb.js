@@ -4,6 +4,7 @@ import {
 } from 'behavior3js';
 
 import _ from 'lodash';
+import Logger from 'js-logger';
 
 import { newChildObject } from '../../utils';
 import MyBaseNode from './MyBaseNode';
@@ -31,7 +32,7 @@ TargetSuitableWithBomb.prototype.tick = function(tree) {
   // console.log(index, position, 'keep old bomb');
 
   if (index < 0) {
-    console.log('target remove 1');
+    Logger.info('target remove 1');
     blackboard.set('rejectTarget', true, true);
     return FAILURE;
   }
@@ -41,7 +42,7 @@ TargetSuitableWithBomb.prototype.tick = function(tree) {
 
   if (!rDirects.endsWith(directs) && !this.ref.checkPathCanWalk(positions)) {
     // not same path
-    console.log('target remove 2');
+    Logger.info('target remove 2');
     blackboard.set('rejectTarget', true, true);
     return FAILURE;
   }

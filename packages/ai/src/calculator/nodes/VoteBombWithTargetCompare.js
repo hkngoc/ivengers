@@ -4,6 +4,7 @@ import {
 } from 'behavior3js';
 
 import _ from 'lodash';
+import Logger from 'js-logger';
 
 import { newChildObject } from '../../utils';
 import MyBaseNode from './MyBaseNode';
@@ -52,7 +53,7 @@ VoteBombWithTargetCompare.prototype.tick = function(tree) {
     }
   }
 
-  console.log('compare', accept);
+  Logger.info('compare', accept);
   if (accept) {
     const { lastResult } = this.ref;
     blackboard.set('result', { ...lastResult, watch: true }, true);

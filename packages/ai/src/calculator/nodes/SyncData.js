@@ -1,7 +1,9 @@
 import {
   SUCCESS
 } from 'behavior3js';
+
 import _ from 'lodash';
+import Logger from 'js-logger';
 
 import { newChildObject } from '../../utils';
 import MyBaseNode from './MyBaseNode';
@@ -76,7 +78,7 @@ SyncData.prototype.tick = function(tree) {
   this.ref.map =  map;
   this.ref.grid = grid;
 
-  console.log(map);
+  Logger.debug(map);
   return SUCCESS;
 };
 

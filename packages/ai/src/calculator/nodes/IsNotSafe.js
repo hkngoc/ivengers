@@ -3,7 +3,9 @@ import {
   FAILURE
 } from 'behavior3js';
 
+import Logger from 'js-logger';
 import _ from 'lodash';
+
 import { newChildObject } from '../../utils';
 import MyBaseNode from './MyBaseNode';
 
@@ -22,7 +24,7 @@ IsNotSafe.prototype.tick = function(tree) {
   const isSafe = this.isSafePlace(node, id);
 
   blackboard.set('isSafe', isSafe, true);
-  // console.log('isSafe', isSafe);
+  Logger.debug('isSafe', isSafe);
 
   return isSafe ? FAILURE : SUCCESS;
 };

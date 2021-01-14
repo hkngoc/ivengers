@@ -5,6 +5,7 @@ import {
 
 import _ from 'lodash';
 import moment from 'moment';
+import Logger from 'js-logger';
 
 import { newChildObject } from '../../utils';
 import MyBaseNode from './MyBaseNode';
@@ -42,7 +43,7 @@ UpdateLastResult.prototype.tick = function(tree) {
     const diff = this.diffTimestamp(current.timestamp, timestamp);
     if (diff > (index > 0 ? 1.3 * tpc + 50 : 1.5 * tpc + 100)) {
       // long time no move, remove target
-      console.log('long time no move');
+      Logger.info('long time no move');
       this.ref.lastResult = null;
     }
   } else {
@@ -53,17 +54,17 @@ UpdateLastResult.prototype.tick = function(tree) {
 
       if (index == positions.length - 2) {
         // meet target, remove target
-        console.log('target done');
+        Logger.info('target done');
         this.ref.lastResult = null;
       }
     } else {
       // wrong way, remove target
-      console.log('wrong way');
+      Logger.info('wrong way');
       this.ref.lastResult = null;
     }
   }
 
-  console.log(this.ref.lastResult);
+  Logger.debug(this.ref.lastResult);
 
   return SUCCESS;
 };
