@@ -6,25 +6,18 @@ import {
   Col
 } from 'react-bootstrap';
 import BootstrapSwitchButton from 'bootstrap-switch-button-react';
+import { withCookies } from 'react-cookie';
 
 import Blocking from './Blocking';
 
-import avatarGreen from './assets/hulk.svg';
-import avatarRed from './assets/ironman.svg';
-// import gamepadIcon from './assets/gamepad-icon1.png';
+import avatarGreen from '../assets/hulk.svg';
+import avatarRed from '../assets/ironman.svg';
 import GamePadSvg from './GamePadSvg';
 
-const HOSTS = process.env.REACT_APP_HOSTS.split(",");
-const DEFAULT_HOST = HOSTS[0];
-
-const TEAMS = process.env.REACT_APP_TEAMS.split(";")
-  .map(t => {
-    const val = t.split(",");
-    return {
-      label: val[0],
-      value: val[1]
-    }
-  });
+import {
+  HOSTS,
+  TEAMS
+} from './constant';
 
 const Query = (props) => {
   const { onConnect, onDisconnect, status, gamepad, keyStatus, playerRed } = props;
@@ -68,7 +61,7 @@ const Query = (props) => {
       <div className="py-3">
         {
           gamepad ? (
-            <GamePadSvg {...keyStatus}/>
+            <GamePadSvg {...keyStatus} className="avatar"/>
           ) : (
             <img
               className="d-flex mx-auto w-100 avatar"
@@ -85,7 +78,6 @@ const Query = (props) => {
               as="select"
               name="host"
               ref={register}
-              defaultValue={DEFAULT_HOST}
               disabled={status === "connected"}
             >
               {
@@ -146,4 +138,4 @@ const Query = (props) => {
   );
 }
 
-export default Query;
+export default withCookies(Query);

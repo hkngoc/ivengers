@@ -37,6 +37,7 @@ AI.prototype.buildTree = function() {
 /*common func here*/
 AI.prototype.getPlayerSortId = function(id) {
   const split = id.split('-');
+
   return `${split[0]}-${split[1]}`;
 };
 

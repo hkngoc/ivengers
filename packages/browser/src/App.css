@@ -3,9 +3,13 @@ body {
   background-position: center;
   background-size: cover;
   background-repeat: no-repeat;
-  color: var(--white);
+  /*color: var(--white);*/
   display: flex;
   flex-direction: column;
+}
+
+#content, footer {
+  color: var(--white);
 }
 
 #root {
@@ -74,7 +78,74 @@ form > *:not(:last-child) {
   background-color: #fff;
 }
 
-svg {
+svg.avatar {
   width: 100%;
   min-width: 80px;
+}
+
+#toolbar {
+  position: absolute;
+  right: 0;
+}
+
+.nav-tabs-vertical {
+  border-right: 1px solid #dee2e6;
+}
+
+.nav-tabs-vertical .nav-item.show .nav-link, .nav-tabs-vertical .nav-link.active {
+  color: #495057;
+  background-color: #fff;
+  border: solid #dee2e6;
+  border-width: 1px 0px 1px 1px;
+  border-top-left-radius: .25rem;
+  border-bottom-left-radius: .25rem;
+}
+/*
+.nav-tabs-vertical .nav-link {
+  border: 1px solid transparent;
+  border-top-left-radius: .25rem;
+  border-bottom-left-radius: .25rem;
+}*/
+
+.nav-tabs-vertical .nav-item {
+  margin-right: -1px;
+}
+
+.nav-remain {
+  display: flex;
+  flex-grow: 1;
+  flex-shrink: 1;
+  flex-basis: auto;
+  border-right: 1px solid #dee2e6;
+}
+
+.select-setting {
+  text-align-last: right;
+}
+
+.select-setting option {
+  direction: rtl;
+}
+
+.setting-body a {
+  color: var(--info);
+}
+
+.setting-body code a {
+  color: unset;
+}
+
+.setting-body .custom-control-input:checked ~ .custom-control-label::before{
+  border-color: var(--info);
+  background-color: var(--info);
+}
+
+.setting-body .custom-control-input:disabled:checked ~ .custom-control-label::before {
+  border-color: var(--info);
+  background-color: var(--info);
+  opacity: 0.5;
+}
+
+.tab-content {
+  min-height: calc(100vh - 205px);
 }
