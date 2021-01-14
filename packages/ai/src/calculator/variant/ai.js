@@ -461,7 +461,7 @@ AI.prototype.countingScore = function(obj) {
   let score = 0;
 
   score = score + 1.0 * box;
-  score = score + 0.7 * enemy; // disable to debug
+  score = score + 1.0 * enemy; // disable to debug
   score = score + 0.5 * virus.length;
   score = score + 0.5 * human.length;
   score = score + 1.8 * gifts.length; // can be score by type of gift or spoil...

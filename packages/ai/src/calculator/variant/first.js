@@ -203,6 +203,11 @@ First.prototype.buildTree = function() {
                 ]
               })
             ]
+          }),
+          new Sequence({
+            children: [
+              new NODES.StopIfNeeded(this)
+            ]
           })
         ]
       })

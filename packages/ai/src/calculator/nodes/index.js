@@ -1,5 +1,6 @@
 import FilterEvent from './FilterEvent';
 import CheckWinner from './CheckWinner';
+import StopIfNeeded from './StopIfNeeded';
 
 import SyncData from './SyncData';
 import UpdateFlame from './UpdateFlame';
@@ -61,6 +62,7 @@ export {
 
   FilterEvent,
   CheckWinner,
+  StopIfNeeded,
 
   SyncData,
 

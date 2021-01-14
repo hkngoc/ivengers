@@ -24,6 +24,7 @@ TargetSafeStillGood.prototype.tick = function(tree) {
   const index = _.findIndex(candidates, candidate => candidate.position.x == position.x && candidate.position.y == position.y);
 
   if (index < 0) {
+    blackboard.set('rejectTarget', true, true);
     return FAILURE;
   }
 
@@ -32,6 +33,7 @@ TargetSafeStillGood.prototype.tick = function(tree) {
 
   if (!rDirects.endsWith(directs) && !this.ref.checkPathCanWalk(positions)) {
     // not same path
+    blackboard.set('rejectTarget', true, true);
     return FAILURE;
   }
 
