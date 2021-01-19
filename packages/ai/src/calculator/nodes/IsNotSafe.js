@@ -21,7 +21,7 @@ IsNotSafe.prototype.tick = function(tree) {
   const { id, currentPosition: { col:x, row: y } } = player;
 
   const node = grid.getNodeAt(x, y);
-  const isSafe = this.isSafePlace(node, id);
+  const isSafe = this.isSafePlace(node, grid, id);
 
   blackboard.set('isSafe', isSafe, true);
   Logger.debug('isSafe', isSafe);
@@ -29,16 +29,19 @@ IsNotSafe.prototype.tick = function(tree) {
   return isSafe ? FAILURE : SUCCESS;
 };
 
-IsNotSafe.prototype.isSafePlace = function(node, playerId) {
+IsNotSafe.prototype.isSafePlace = function(node, grid, playerId) {
   const {
     flameRemain = [],
-    travelCost,
-    humanTravel = [],
-    virusTravel = [],
+    x, y
   } = node;
 
+  const scare = this.ref.countingScareByRadar(node, grid);
   const passive = this.ref.playerPassiveNumber(playerId);
-  const scareCount = _.filter([...humanTravel, ...virusTravel], o => (o.step > 0 && o.main) || (o.step <= 2));
+
+  const scareCount = _(scare)
+    .uniqBy(o => `${o.type}-${o.index}`)
+    .filter(o => (o.step > 0 && o.main) || (o.step <= 5))
+    .value();
 
   if (flameRemain.length > 0 || passive < scareCount.length) {
     return false;

@@ -3,6 +3,7 @@ import {
   FAILURE
 } from 'behavior3js';
 
+import _ from 'lodash';
 import Logger from 'js-logger';
 
 import { newChildObject } from '../../utils';
@@ -33,7 +34,7 @@ FindSafePlace.prototype.tick = function(tree) {
     for (let j = 0; j < cols; ++j) {
       const node = grid.getNodeAt(j, i);
 
-      const accept = this.conditionFn.apply(this, [node, passive]);
+      const { accept, scare } = this.conditionFn.apply(this, [node, passive]);
       if (accept) {
         const { travelCost } = node;
         const score = this.ref.scoreFn.apply(this.ref, [node]);
@@ -46,7 +47,8 @@ FindSafePlace.prototype.tick = function(tree) {
           },
           score,
           extreme,
-          cost: travelCost
+          cost: travelCost,
+          scare: scare.length
         });
       }
     }
@@ -60,22 +62,28 @@ FindSafePlace.prototype.tick = function(tree) {
 };
 
 FindSafePlace.prototype.conditionFn = function(node, passive) {
-  const { travelCost, flameRemain = [] } = node;
+  const {
+    travelCost,
+    flameRemain = [],
+    humanTravel = [],
+    virusTravel = [],
+  } = node;
 
-  if (travelCost == 0) {
-    const {
-      humanTravel = [],
-      virusTravel = [],
-    } = node;
+  if (travelCost > 0) {
+    let accept = flameRemain.length <= 0;
+    const scare = _.filter([...humanTravel, ...virusTravel], o => o.main || o.step <= 2);
+    accept = accept && passive >= scare.length;
 
-    const scareCount = _.filter([...humanTravel, ...virusTravel], o => o.main || o.step <= 2);
-
-    return flameRemain.length <= 0 && passive > scareCount.length;
-  } else if (travelCost > 0) {
-    return flameRemain.length <= 0;
+    return {
+      accept,
+      scare
+    }
+  } else {
+    return {
+      accept: false,
+      scare: []
+    }
   }
-
-  return false;
 };
 
 export default FindSafePlace;

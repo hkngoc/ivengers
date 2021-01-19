@@ -3,6 +3,7 @@ import {
   FAILURE
 } from 'behavior3js';
 
+import _ from 'lodash';
 import Logger from 'js-logger';
 
 import { newChildObject } from '../../utils';

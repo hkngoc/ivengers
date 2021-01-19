@@ -43,7 +43,7 @@ UpdateVirus.prototype.drawPath = function(virus, grid, fn) {
       const p = directs[direct];
       const near = p.adj(direct);
 
-      const stop = (direct == mainDirect && grid.wouldStopVirusAt(near.x, near.y)) || (direct != mainDirect && (step > 3 || grid.wouldStopVirusAt(near.x, near.y)));
+      const stop = grid.wouldStopVirusAt(near.x, near.y);
       if (stop) {
         directs = _.omit(directs, direct);
       } else {

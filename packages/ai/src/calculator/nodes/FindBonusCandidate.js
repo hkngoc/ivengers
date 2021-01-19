@@ -4,6 +4,7 @@ import {
 } from 'behavior3js';
 
 import _ from 'lodash';
+import Logger from 'js-logger';
 
 import { newChildObject } from '../../utils';
 import MyBaseNode from './MyBaseNode';
@@ -50,6 +51,7 @@ FindBonusCandidate.prototype.tick = function(tree) {
     }
   }
 
+  Logger.debug(candidates);
   blackboard.set('bonusCandidates', candidates, true);
 
   return SUCCESS;

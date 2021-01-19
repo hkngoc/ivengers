@@ -330,11 +330,91 @@ AI.prototype.canPlayerWalkBySarsCov = function(playerId, node, neighbor, grid, c
   const passive = this.playerPassiveNumber(playerId);
   const { virus = [], human = [] } = profit;
 
-  if (passive < virus.length + human.length) {
+  const passiveNeededByHuman = _(human)
+    .groupBy('index')
+    .map((v, k) => {
+      const infected = _.find(v, h => h.infected == true);
+      return infected ? 1 : 0
+    })
+    .sum();
+
+  if (passive < virus.length + passiveNeededByHuman) {
     return false;
   }
 
   return true;
+};
+
+AI.prototype.countingScareByRadar = function(node, grid, offset = 2) {
+  const { x, y } = node;
+  const scare = [];
+
+  for (let i = -1 * offset; i <= offset; i++) {
+    for (let j = -1 * offset; j <= offset; j++) {
+      if (!grid.isInside(x + i, y + j)) {
+        continue;
+      }
+      const near = grid.getNodeAt(x + i, y + j);
+      if (!near.travelCost || near.travelCost > (Math.abs(i) + Math.abs(j))) {
+        continue;
+      }
+      const { humanTravel = [], virusTravel = [] } = near;
+      scare.push(..._.map(humanTravel, h => ({ ...h, type: 'human' })));
+      scare.push(..._.map(virusTravel, v => ({ ...v, type: 'virus' })));
+    }
+  }
+
+  return scare;
+};
+
+AI.prototype.humanCanBeInfected = function(pos, grid, cost, offset = 300) {
+  const { x, y } = pos;
+  const node = grid.getNodeAt(x, y);
+  const { humanTravel = [], virusTravel = [] } = node;
+
+  const htpc = this.timeToCrossACell('human');
+  const vtpc = this.timeToCrossACell('virus');
+
+  const travelTime = htpc * cost;
+  const left = travelTime - htpc/2;
+  const right = travelTime + htpc/2;
+
+  for (const h of humanTravel) {
+    if (h.infected == false) {
+      continue;
+    }
+
+    const { step, curedRemainTime = 0, main = false } = h;
+
+    if (main == false && step > 3) {
+      continue;
+    }
+
+    const hTravelTime = curedRemainTime + step * htpc;
+    const hLeft       = hTravelTime - htpc/2 - offset;
+    const hRight      = hTravelTime + htpc/2 + offset;
+
+    if ((hLeft < left && left < hRight) || (hLeft < right && right < hRight)) {
+      return true;
+    }
+  }
+
+  for (const v of virusTravel) {
+    const { index, step, main = false } = v;
+    if (main == false && step > 3) {
+      continue;
+    }
+
+    const vTravelTime = step * vtpc;
+    const vLeft       = vTravelTime - vtpc/2 - offset;
+    const vRight      = vTravelTime + vtpc/2 + offset
+
+    if ((vLeft < left && left < vRight) || (vLeft < right && right < vRight)) {
+      return true;
+    }
+  }
+
+  return false;
 };
 
 AI.prototype.checkPathCanWalk = function(positions) {
@@ -446,7 +526,8 @@ AI.prototype.scoreForSpoils = function(spoils) {
     .map(spoil => {
       switch (spoil) {
         case 5:
-          return 3.0;
+          return 4.0;
+        case 3:
         case 4:
           return 1.0;
         default:
@@ -464,7 +545,7 @@ AI.prototype.countingScore = function(obj) {
   score = score + 1.0 * box;
   score = score + 1.0 * enemy; // disable to debug
   score = score + 0.5 * virus.length;
-  score = score + 0.5 * human.length;
+  score = score + _.sumBy(human, h => h.infected ? 0.5 : 1.0);
   score = score + 1.8 * gifts.length; // can be score by type of gift or spoil...
   score = score + this.scoreForSpoils(spoils);
 
@@ -479,7 +560,7 @@ AI.prototype.scoreFn = function(node) {
   } = node;
 
   const { box = 0, enemy = 0, safe } = bombProfit;
-  const { gifts = [], spoils = [] } = scoreProfit;
+  const { gifts = [], spoils = [], virus = [], human = [] } = scoreProfit;
 
   return this.countingScore({
     gifts,
@@ -489,16 +570,17 @@ AI.prototype.scoreFn = function(node) {
   });
 };
 
-AI.prototype.roundScore = function(score) {
-  return +(Math.round(score + 'e+5') + 'e-5');
+AI.prototype.roundScore = function(score, offset = 0.00005) {
+
+  return +(Math.round((Math.round(score /offset) * offset) + 'e+5') + 'e-5');
 };
 
 AI.prototype.extremeFn = function(score, cost) {
   if (cost <= 0) {
-    cost = 0.7;
-  }
-
-  if (cost > 1) {
+    cost = 0.85;
+  } else if (cost == 1) {
+    cost = 1.1;
+  } else {
     // cost = cost - 0.5;
     cost = cost * 0.85;
     cost = Math.pow(cost, 6/10);
@@ -508,9 +590,11 @@ AI.prototype.extremeFn = function(score, cost) {
   score = 1.0 * score / cost;
   // round by 0.1
   score = this.roundScore(score);
-  if (score == 0) {
-    score = 0.1;
-  }
+
+  // why ??
+  // if (score == 0) {
+  //   score = 0.1;
+  // }
 
   return score;
 };

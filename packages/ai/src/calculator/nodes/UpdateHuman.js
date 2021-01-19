@@ -2,6 +2,8 @@ import {
   SUCCESS
 } from 'behavior3js';
 
+import _ from 'lodash';
+
 import { newChildObject } from '../../utils';
 import MyBaseNode from './MyBaseNode';
 import { Pos, Direct } from '../variant/helper';
@@ -16,7 +18,8 @@ UpdateHuman.prototype.tick = function(tree) {
   const { map, grid } = this.ref;
   const { map_info: { human } } = map;
 
-  for (const h of human) {
+  const ordered = _.orderBy(human, ['infected'], ['desc']);
+  for (const h of ordered) {
     this.drawPath(h, grid, this.updateFn);
   }
   return SUCCESS;
@@ -26,6 +29,7 @@ UpdateHuman.prototype.drawPath = function(human, grid, fn) {
   const { position, direction, index, infected, curedRemainTime } = human;
   const { col, row } = position;
 
+  let beInfected = infected;
   let directs = {};
   const pos = new Pos(col, row);
   directs[Direct.LEFT] = pos;
@@ -41,12 +45,13 @@ UpdateHuman.prototype.drawPath = function(human, grid, fn) {
       const p = directs[direct];
       const near = p.adj(direct);
 
-      const stop = (direct == mainDirect && grid.wouldStopVirusAt(near.x, near.y)) || (direct != mainDirect && (step > 3 || grid.wouldStopVirusAt(near.x, near.y)));;
+      const stop = grid.wouldStopVirusAt(near.x, near.y);
       if (stop) {
         directs = _.omit(directs, direct);
       } else {
+        beInfected = beInfected || this.ref.humanCanBeInfected(near, grid, step);
         // update grid at near
-        fn.apply(this, [near, grid, step, index, infected, curedRemainTime, direct == mainDirect]);
+        fn.apply(this, [near, grid, step, index, beInfected, curedRemainTime, direct == mainDirect]);
 
         directs[direct] = near;
       }
