@@ -159,8 +159,9 @@ UpdateGrid.prototype.findSafePlace = function(playerId, pos, grid) {
       }
 
       const { /*score,*/ merged: mergeProfit } = this.ref.scoreForWalk(playerId, node, neighbor, grid, nextTravelCost, 100, node.scoreProfit);
-      const walkable = this.canPlayerWalk(playerId, node, neighbor, grid, nextTravelCost, preCost, 300, true, mergeProfit,);
-      if (walkable) {
+      const walkable = this.canPlayerWalk(playerId, node, neighbor, grid, nextTravelCost, preCost, 300, true, mergeProfit);
+      const fasterEnemy = this.ref.fasterEnemy(neighbor, nextTravelCost, preCost);
+      if (walkable && fasterEnemy) {
         openList.push(neighbor);
         neighbor.safeOpened = true;
         neighbor.safeTravelCost = nextTravelCost;
@@ -189,7 +190,7 @@ UpdateGrid.prototype.getProfitAdder = function(bomb, items, safer) {
   let score = 0;
 
   score = score + gifts.length;
-  score = score + spoils.length;
+  score = score + _.sumBy(spoils, s => s == 5 ? 2 : 1);
   score = score + safer;
 
   return score / 10;

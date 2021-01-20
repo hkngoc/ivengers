@@ -32,7 +32,7 @@ VoteBombWithBonusCompare.prototype.tick = function(tree) {
   const nearBomb = _.filter(bombOrdered, candidate => candidate.cost <= 1);
   if (nearBomb.length > 0) {
     const bestNear = _.first(nearBomb);
-    if (bestNear.extreme > 0.5 * bestBonus.extreme) {
+    if (bestNear.extreme > 0.8 * bestBonus.extreme) {
       blackboard.set('bombWinner', bestNear, true);
       return SUCCESS;
     }

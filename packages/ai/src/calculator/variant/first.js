@@ -33,6 +33,7 @@ First.prototype.buildTree = function() {
           // need implement update enemy grid in future
           new NODES.CalculateBombDelay(this),
           new NODES.CalculateEmpty(this),
+          new NODES.UpdateEnemy(this),
           new NODES.UpdateGrid(this),
         ]
       }),
@@ -175,7 +176,7 @@ First.prototype.buildTree = function() {
                   new NODES.CleanGrid(this),
                   new NODES.CalculateBombDelay(this), // drop virtual bomb in next step, so re-update map... my lost
                   new NODES.UpdateGrid(this),
-                  new NODES.FindSafePlace(this)
+                  new NODES.FindSafePlace(this, true)
                 ]
               }),
               new NODES.IsNotSafe(this),

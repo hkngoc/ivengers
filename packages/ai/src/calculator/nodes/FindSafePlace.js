@@ -9,8 +9,9 @@ import Logger from 'js-logger';
 import { newChildObject } from '../../utils';
 import MyBaseNode from './MyBaseNode';
 
-const FindSafePlace = function(ref) {
+const FindSafePlace = function(ref, faster = false) {
   MyBaseNode.apply(this, [ref]);
+  this.faster = faster;
 };
 
 FindSafePlace.prototype = newChildObject(MyBaseNode.prototype);
@@ -58,7 +59,11 @@ FindSafePlace.prototype.tick = function(tree) {
 
   blackboard.set('safeCandidates', candidates, true);
 
-  return SUCCESS;
+  if (candidates.length > 0) {
+    return SUCCESS;
+  } else {
+    return FAILURE;
+  }
 };
 
 FindSafePlace.prototype.conditionFn = function(node, passive) {
@@ -73,6 +78,9 @@ FindSafePlace.prototype.conditionFn = function(node, passive) {
     let accept = flameRemain.length <= 0;
     const scare = _.filter([...humanTravel, ...virusTravel], o => o.main || o.step <= 2);
     accept = accept && passive >= scare.length;
+    if (this.faster) {
+      accept = accept && this.ref.fasterEnemy(node, travelCost, 0);
+    }
 
     return {
       accept,

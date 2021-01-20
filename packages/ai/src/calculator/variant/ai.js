@@ -74,6 +74,12 @@ AI.prototype.getMyPlayer = function() {
   return this.getPlayer(myId);
 };
 
+AI.prototype.getEnemyPlayer = function() {
+  const { enemyId } = this.map;
+
+  return this.getPlayer(enemyId);
+};
+
 AI.prototype.getDirectOf = function(direction) {
   return DirectOf[direction];
 };
@@ -258,6 +264,16 @@ AI.prototype.safeScoreForWalk = function(playerId, node, neighbor, travelCost) {
   }
 
   return 0;
+};
+
+AI.prototype.fasterEnemy = function(node, travelCost, preCost = 0) {
+  const { enemyTravelCost } = node;
+
+  if (enemyTravelCost >= 0 && enemyTravelCost <= travelCost + preCost) {
+    return false;
+  }
+
+  return true;
 };
 
 AI.prototype.timeToCrossACell = function(id) {

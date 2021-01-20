@@ -3,6 +3,7 @@ import CheckWinner from './CheckWinner';
 import StopIfNeeded from './StopIfNeeded';
 
 import SyncData from './SyncData';
+import UpdateEnemy from './UpdateEnemy';
 import UpdateFlame from './UpdateFlame';
 import UpdateVirus from './UpdateVirus';
 import UpdateHuman from './UpdateHuman';
@@ -67,6 +68,7 @@ export {
   SyncData,
 
   UpdateFlame,
+  UpdateEnemy,
   UpdateVirus,
   UpdateHuman,
   UpdateGrid,
