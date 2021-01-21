@@ -69,13 +69,21 @@ FindBombCandidate.prototype.conditionFn = function(node, tpc, remain) {
   const {
     travelCost,
     value,
-    bombProfit = {},
+    bombProfit,
     flameRemain = []
   } = node;
 
+  if (travelCost == undefined || travelCost == null || travelCost < 0) {
+    return false;
+  }
+  if (!bombProfit) {
+    return false;
+  }
+
   const { box, enemy, safe } = bombProfit;
 
-  const hasBenefit = travelCost >= 0 && safe && (this.ref.countingScore({ box, enemy }) > 0);
+  const hasBenefit = travelCost >= 0 && safe == true && (this.ref.countingScore({ box, enemy }) > 0);
+
   if (!hasBenefit) {
     return false;
   }

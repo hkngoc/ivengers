@@ -12,7 +12,7 @@ import Logger from 'js-logger';
 
 import { newChildObject } from '../../utils';
 import MyBaseNode from './MyBaseNode';
-import { Pos } from '../variant/helper';
+import { Pos, Queue } from '../variant/helper';
 
 const UpdateGrid = function(ref) {
   MyBaseNode.apply(this, [ref]);
@@ -63,7 +63,6 @@ UpdateGrid.prototype.travelGrid = function(playerId, pos, grid) {
     const neighbors = grid.getNeighbors(node, DiagonalMovement.Never, playerNumber);
 
     for (const neighbor of neighbors) {
-
       // really walkable under bomb flame remain
       const { score: scoreProfit, merged: mergeProfit } = this.ref.scoreForWalk(playerId, node, neighbor, grid, nextTravelCost, 100, node.scoreProfit);
       const walkable = this.canPlayerWalk(playerId, node, neighbor, grid, nextTravelCost, 0, 300, false, mergeProfit);
@@ -139,15 +138,17 @@ UpdateGrid.prototype.findSafePlace = function(playerId, pos, grid) {
   startNode.safeOpened = true;
   startNode.safeTravelCost = 0;
 
-  const openList = [];
-  openList.push(startNode);
+  const openList = new Queue();
+  openList.enqueue(startNode);
 
-  while (openList.length > 0) {
-    const node = openList.shift();
+  let safe = false;
+  while (!openList.isEmpty()) {
+    const node = openList.dequeue();
     node.safeClosed = true;
 
-    if (this.isSafePlace(node)) {
-      return true;
+    if (this.isSafePlace(node, playerId)) {
+      safe = true;
+      break;
     }
 
     const nextTravelCost = node.safeTravelCost + 1;
@@ -162,14 +163,22 @@ UpdateGrid.prototype.findSafePlace = function(playerId, pos, grid) {
       const walkable = this.canPlayerWalk(playerId, node, neighbor, grid, nextTravelCost, preCost, 300, true, mergeProfit);
       const fasterEnemy = this.ref.fasterEnemy(neighbor, nextTravelCost, preCost);
       if (walkable && fasterEnemy) {
-        openList.push(neighbor);
         neighbor.safeOpened = true;
         neighbor.safeTravelCost = nextTravelCost;
+        openList.enqueue(neighbor);
       }
     }
   }
 
-  return false;
+  const after = openList.elements();
+
+  for (const node of after) {
+    delete node['safeOpened'];
+    delete node['safeClosed'];
+    delete node['safeTravelCost'];
+  }
+
+  return safe;
 };
 
 UpdateGrid.prototype.canPlayerWalk = function(...params) {
@@ -177,10 +186,12 @@ UpdateGrid.prototype.canPlayerWalk = function(...params) {
   // return this.ref.canPlayerWalkByFlame(...params);
 };
 
-UpdateGrid.prototype.isSafePlace = function(node) {
-  const { flameRemain = [] } = node;
+UpdateGrid.prototype.isSafePlace = function(node, playerId) {
+  const { flameRemain = [], tempFlameRemain = [], safeTravelCost } = node;
+  // const tpc = this.ref.timeToCrossACell(playerId);
+  // const max = Math.round(0.8 * Math.round(2000 / tpc));
 
-  return flameRemain.length <= 0;
+  return [ ...flameRemain, ...tempFlameRemain].length <= 0 /*&& safeTravelCost >= 0 && safeTravelCost <= max*/;
 };
 
 UpdateGrid.prototype.getProfitAdder = function(bomb, items, safer) {

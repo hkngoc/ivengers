@@ -558,7 +558,7 @@ AI.prototype.countingScore = function(obj) {
 
   let score = 0;
 
-  score = score + 1.0 * box;
+  score = score + 0.75 * box;
   score = score + 1.0 * enemy; // disable to debug
   score = score + 0.5 * virus.length;
   score = score + _.sumBy(human, h => h.infected ? 0.5 : 1.0);

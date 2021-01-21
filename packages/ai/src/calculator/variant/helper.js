@@ -249,10 +249,72 @@ CustomGrid.prototype.removeBombAt = function(x, y){
 };
 
 //===============================================================
+const Queue = function(elements) {
+  this._elements = Array.isArray(elements) ? elements : [];
+  this._offset = 0;
+};
+
+Queue.prototype.enqueue = function(element) {
+  this._elements.push(element);
+
+  return this;
+};
+
+Queue.prototype.dequeue = function() {
+  if (this.size() === 0) return null;
+
+  const first = this.front();
+  this._offset += 1;
+
+  // if (this._offset * 2 < this._elements.length) return first;
+
+  // // only remove dequeued elements when reaching half size
+  // // to decrease latency of shifting elements.
+  // this._elements = this._elements.slice(this._offset);
+  // this._offset = 0;
+
+  return first;
+};
+
+Queue.prototype.front = function() {
+  return this.size() > 0 ? this._elements[this._offset] : null;
+};
+
+Queue.prototype.back = function() {
+  return this.size() > 0 ? this._elements[this._elements.length - 1] : null;
+};
+
+Queue.prototype.size = function() {
+  return this._elements.length - this._offset;
+};
+
+Queue.prototype.isEmpty = function() {
+  return this.size() === 0;
+};
+
+Queue.prototype.toArray = function() {
+  return this._elements.slice(this._offset);
+};
+
+Queue.prototype.elements = function() {
+  return this._elements;
+};
+
+Queue.prototype.clear = function() {
+  this._elements = [];
+  this._offset = 0;
+}
+
+Queue.prototype.clone = function() {
+  return new Queue(this._elements.slice(this._offset));
+};
+
+//===============================================================
 export {
   Direct,
   DirectOf,
   Pos,
+  Queue,
   CustomGrid,
   getDirect
 }
