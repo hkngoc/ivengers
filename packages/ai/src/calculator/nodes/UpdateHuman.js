@@ -6,7 +6,7 @@ import _ from 'lodash';
 
 import { newChildObject } from '../../utils';
 import MyBaseNode from './MyBaseNode';
-import { Pos, Direct } from '../variant/helper';
+import { Pos, Direct } from '../core/helper';
 
 const UpdateHuman = function(ref) {
   MyBaseNode.apply(this, [ref]);

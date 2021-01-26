@@ -35,10 +35,18 @@ FindSafePlace.prototype.tick = function(tree) {
     for (let j = 0; j < cols; ++j) {
       const node = grid.getNodeAt(j, i);
 
-      const { accept, scare } = this.conditionFn.apply(this, [node, passive]);
-      if (accept) {
+      const scare = this.ref.countingScareByRadar(node, grid);
+      const {
+        acceptFlame,
+        acceptFaster,
+        acceptScare
+      } = this.conditionFn.apply(this, [node, grid, passive, scare]);
+
+      // need implement 2 round with faster or not
+
+      if (acceptFlame && acceptScare && acceptFaster) {
         const { travelCost } = node;
-        const score = this.ref.scoreFn.apply(this.ref, [node]);
+        const score = this.ref.scoreFn.apply(this.ref, [node, scare.length]);
         const extreme = this.ref.extremeFn.apply(this.ref, [score, travelCost]);
 
         candidates.push({
@@ -66,32 +74,8 @@ FindSafePlace.prototype.tick = function(tree) {
   }
 };
 
-FindSafePlace.prototype.conditionFn = function(node, passive) {
-  const {
-    travelCost,
-    flameRemain = [],
-    humanTravel = [],
-    virusTravel = [],
-  } = node;
-
-  if (travelCost > 0) {
-    let accept = flameRemain.length <= 0;
-    const scare = _.filter([...humanTravel, ...virusTravel], o => o.main || o.step <= 2);
-    accept = accept && passive >= scare.length;
-    if (this.faster) {
-      accept = accept && this.ref.fasterEnemy(node, travelCost, 0);
-    }
-
-    return {
-      accept,
-      scare
-    }
-  } else {
-    return {
-      accept: false,
-      scare: []
-    }
-  }
+FindSafePlace.prototype.conditionFn = function(...params) {
+  return this.ref.conditionSafeFn.apply(this.ref, [...params, this.faster]);
 };
 
 export default FindSafePlace;

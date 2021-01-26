@@ -12,7 +12,7 @@ import Logger from 'js-logger';
 
 import { newChildObject } from '../../utils';
 import MyBaseNode from './MyBaseNode';
-import { Pos, Queue } from '../variant/helper';
+import { Pos, Queue } from '../core/helper';
 
 const UpdateGrid = function(ref) {
   MyBaseNode.apply(this, [ref]);
@@ -64,7 +64,7 @@ UpdateGrid.prototype.travelGrid = function(playerId, pos, grid) {
 
     for (const neighbor of neighbors) {
       // really walkable under bomb flame remain
-      const { score: scoreProfit, merged: mergeProfit } = this.ref.scoreForWalk(playerId, node, neighbor, grid, nextTravelCost, 100, node.scoreProfit);
+      const { score: scoreProfit, merged: mergeProfit } = this.ref.scoreForWalk(playerId, node, neighbor, grid, nextTravelCost, 500, node.scoreProfit);
       const walkable = this.canPlayerWalk(playerId, node, neighbor, grid, nextTravelCost, 0, 300, false, mergeProfit);
 
       if (neighbor.closed || !walkable) {
@@ -142,13 +142,20 @@ UpdateGrid.prototype.findSafePlace = function(playerId, pos, grid) {
   openList.enqueue(startNode);
 
   let safe = false;
+  let safePlaceCount = 0;
+
   while (!openList.isEmpty()) {
     const node = openList.dequeue();
     node.safeClosed = true;
 
     if (this.isSafePlace(node, playerId)) {
-      safe = true;
-      break;
+      const fasterEnemy = this.ref.fasterEnemy(node, nextTravelCost, preCost);
+      safePlaceCount++;
+
+      if (fasterEnemy || safePlaceCount >= 6) {
+        safe = true;
+        break;
+      }
     }
 
     const nextTravelCost = node.safeTravelCost + 1;
@@ -161,8 +168,8 @@ UpdateGrid.prototype.findSafePlace = function(playerId, pos, grid) {
 
       const { /*score,*/ merged: mergeProfit } = this.ref.scoreForWalk(playerId, node, neighbor, grid, nextTravelCost, 100, node.scoreProfit);
       const walkable = this.canPlayerWalk(playerId, node, neighbor, grid, nextTravelCost, preCost, 300, true, mergeProfit);
-      const fasterEnemy = this.ref.fasterEnemy(neighbor, nextTravelCost, preCost);
-      if (walkable && fasterEnemy) {
+
+      if (walkable) {
         neighbor.safeOpened = true;
         neighbor.safeTravelCost = nextTravelCost;
         openList.enqueue(neighbor);

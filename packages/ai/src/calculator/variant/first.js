@@ -7,7 +7,7 @@ import {
 
 import * as NODES from '../nodes';
 
-import AI from './ai';
+import AI from '../core';
 
 import { newChildObject } from '../../utils';
 

@@ -40,7 +40,7 @@ IsNotSafe.prototype.isSafePlace = function(node, grid, playerId) {
 
   const scareCount = _(scare)
     .uniqBy(o => `${o.type}-${o.index}`)
-    .filter(o => (o.step > 0 && o.main) || (o.step <= 5))
+    .filter(o => (o.step > 0 && o.main) || (o.step <= 3))
     .value();
 
   if (flameRemain.length > 0 || passive < scareCount.length) {

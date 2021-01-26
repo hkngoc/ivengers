@@ -13,6 +13,8 @@ import UpdateLastResult from './UpdateLastResult';
 import CalculateBombDelay from './CalculateBombDelay';
 import CalculateEmpty from './CalculateEmpty';
 
+import FindCandidate from './FindCandidate';
+
 import FindBonusCandidate from './FindBonusCandidate';
 import HasBonusCandidate from './HasBonusCandidate';
 import IsNearTeleport from './IsNearTeleport';
@@ -78,6 +80,7 @@ export {
   CalculateBombDelay,
 
   IsNearTeleport,
+  FindCandidate,
 
   TargetBonusStillGood,
   TargetSafeStillGood,

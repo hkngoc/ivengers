@@ -4,8 +4,8 @@ import {
   Row,
   Col,
   Nav,
-  Form,
-  Button
+  // Form,
+  // Button
 } from 'react-bootstrap';
 
 const Setting = (props) => {

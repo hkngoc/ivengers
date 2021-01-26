@@ -2,8 +2,8 @@ import {
   ButtonToolbar,
   ButtonGroup,
   Button,
-  OverlayTrigger,
-  Tooltip
+  // OverlayTrigger,
+  // Tooltip
 } from 'react-bootstrap';
 
 import {
