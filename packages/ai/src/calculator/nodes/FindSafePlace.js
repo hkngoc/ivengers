@@ -35,14 +35,13 @@ FindSafePlace.prototype.tick = function(tree) {
     for (let j = 0; j < cols; ++j) {
       const node = grid.getNodeAt(j, i);
 
-      const scare = this.ref.countingScareByRadar(node, grid);
+      const { scare = [] } = node;
       const {
         acceptFlame,
         acceptFaster
       } = this.conditionFn.apply(this, [node, grid, passive, scare]);
-      const acceptScare = this.ref.filterSafeScareLevel0(passive, scare);
 
-      if (acceptFlame && acceptFaster && acceptScare) {
+      if (acceptFlame && acceptFaster) {
         const { travelCost } = node;
         const score = this.ref.scoreFn.apply(this.ref, [node, scare.length]);
         const extreme = this.ref.extremeFn.apply(this.ref, [score, travelCost]);
@@ -61,46 +60,7 @@ FindSafePlace.prototype.tick = function(tree) {
     }
   }
 
-  let interview = true;
-
-  if (interview && candidates.length > 0) {
-    const temp = _.filter(candidates, candidate => {
-      const { scare } = candidate;
-      return this.ref.filterSafeScareLevel1(passive, scare);
-    });
-
-    if (temp.length > 0) {
-      candidates = temp;
-    } else {
-      interview = false;
-    }
-  }
-
-  if (interview && candidates.length > 0) {
-    const temp = _.filter(candidates, candidate => {
-      const { scare } = candidate;
-      return this.ref.filterSafeScareLevel2(passive, scare);
-    });
-
-    if (temp.length > 0) {
-      candidates = temp;
-    } else {
-      interview = false;
-    }
-  }
-
-  if (interview && candidates.length > 0) {
-    const temp = _.filter(candidates, candidate => {
-      const { scare } = candidate;
-      return this.ref.filterSafeScareLevel3(passive, scare);
-    });
-
-    if (temp.length > 0) {
-      candidates = temp;
-    } else {
-      interview = false;
-    }
-  }
+  candidates = this.ref.interviewSafe(candidates, passive);
 
   Logger.debug(candidates);
 

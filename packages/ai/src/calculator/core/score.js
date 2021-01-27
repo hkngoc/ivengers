@@ -24,7 +24,7 @@ AI.prototype.scoreForSpoils = function(spoils) {
 AI.prototype.scoreForHuman = function(human) {
   const { infected = true } = human;
 
-  return infected ? 0.5 : 1.5;
+  return infected ? 0.6 : 1.5;
 };
 
 AI.prototype.scoreFor = function(which) {
@@ -34,7 +34,7 @@ AI.prototype.scoreFor = function(which) {
     case 'enemy':
       return 1.0;
     case 'virus':
-      return 0.5;
+      return 0.4;
     case 'gifts':
       return 1.5;
     default:
@@ -142,7 +142,7 @@ AI.prototype.countingScore = function(obj) {
   score = score + _(human).filter(h => h.main == true).sumBy(h => this.scoreForHuman(h));
   score = score + this.scoreFor('gifts') * gifts.length; // can be score by type of gift or spoil...
   score = score + this.scoreForSpoils(spoils);
-  score = score - 0.5 * scare;
+  score = score - 0.3 * scare;
 
   return score;
 };

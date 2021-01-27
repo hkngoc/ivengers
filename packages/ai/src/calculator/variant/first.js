@@ -39,9 +39,10 @@ First.prototype.buildTree = function() {
       }),
       new NODES.SequenceAlwaysSuccess({
         children: [
-          new NODES.FindBombCandidate(this),
-          new NODES.FindBonusCandidate(this),
-          new NODES.FindSafePlace(this),
+          new NODES.FindCandidate(this),
+          // new NODES.FindSafePlace(this),
+          // new NODES.FindBombCandidate(this),
+          // new NODES.FindBonusCandidate(this),
           new NODES.IsNearTeleport(this),
           new NODES.IsNotSafe(this),
         ]

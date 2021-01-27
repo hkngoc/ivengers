@@ -32,10 +32,13 @@ IsNotSafe.prototype.tick = function(tree) {
 IsNotSafe.prototype.isSafePlace = function(node, grid, playerId) {
   const {
     flameRemain = [],
-    x, y
+    x, y,
+    scare = []
   } = node;
 
-  const scare = this.ref.countingScareByRadar(node, grid);
+  // const scare = this.ref.countingScareByRadar(node, grid);
+  // already loaded from new implement
+
   const passive = this.ref.playerPassiveNumber(playerId);
 
   const scareCount = _(scare)
