@@ -18,7 +18,7 @@ IsNotSafe.prototype = newChildObject(MyBaseNode.prototype);
 IsNotSafe.prototype.tick = function(tree) {
   const { grid, blackboard } = this.ref;
   const player = this.ref.getMyPlayer();
-  const { id, currentPosition: { col:x, row: y } } = player;
+  const { id, currentPosition: { col: x, row: y } } = player;
 
   const node = grid.getNodeAt(x, y);
   const isSafe = this.isSafePlace(node, grid, id);
@@ -40,7 +40,7 @@ IsNotSafe.prototype.isSafePlace = function(node, grid, playerId) {
 
   const scareCount = _(scare)
     .uniqBy(o => `${o.type}-${o.index}`)
-    .filter(o => (o.step > 0 && o.main) || (o.step <= 3))
+    .filter(o => (o.step >= 0 && o.main) || (o.step <= 3))
     .value();
 
   if (flameRemain.length > 0 || passive < scareCount.length) {

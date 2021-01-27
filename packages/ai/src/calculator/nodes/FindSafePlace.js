@@ -29,7 +29,7 @@ FindSafePlace.prototype.tick = function(tree) {
   } = this.ref;
 
   const passive = this.ref.playerPassiveNumber(myId);
-  const candidates = [];
+  let candidates = [];
 
   for (let i = 0; i < rows; ++i) {
     for (let j = 0; j < cols; ++j) {
@@ -38,13 +38,11 @@ FindSafePlace.prototype.tick = function(tree) {
       const scare = this.ref.countingScareByRadar(node, grid);
       const {
         acceptFlame,
-        acceptFaster,
-        acceptScare
+        acceptFaster
       } = this.conditionFn.apply(this, [node, grid, passive, scare]);
+      const acceptScare = this.ref.filterSafeScareLevel0(passive, scare);
 
-      // need implement 2 round with faster or not
-
-      if (acceptFlame && acceptScare && acceptFaster) {
+      if (acceptFlame && acceptFaster && acceptScare) {
         const { travelCost } = node;
         const score = this.ref.scoreFn.apply(this.ref, [node, scare.length]);
         const extreme = this.ref.extremeFn.apply(this.ref, [score, travelCost]);
@@ -57,9 +55,50 @@ FindSafePlace.prototype.tick = function(tree) {
           score,
           extreme,
           cost: travelCost,
-          scare: scare.length
+          scare: scare
         });
       }
+    }
+  }
+
+  let interview = true;
+
+  if (interview && candidates.length > 0) {
+    const temp = _.filter(candidates, candidate => {
+      const { scare } = candidate;
+      return this.ref.filterSafeScareLevel1(passive, scare);
+    });
+
+    if (temp.length > 0) {
+      candidates = temp;
+    } else {
+      interview = false;
+    }
+  }
+
+  if (interview && candidates.length > 0) {
+    const temp = _.filter(candidates, candidate => {
+      const { scare } = candidate;
+      return this.ref.filterSafeScareLevel2(passive, scare);
+    });
+
+    if (temp.length > 0) {
+      candidates = temp;
+    } else {
+      interview = false;
+    }
+  }
+
+  if (interview && candidates.length > 0) {
+    const temp = _.filter(candidates, candidate => {
+      const { scare } = candidate;
+      return this.ref.filterSafeScareLevel3(passive, scare);
+    });
+
+    if (temp.length > 0) {
+      candidates = temp;
+    } else {
+      interview = false;
     }
   }
 

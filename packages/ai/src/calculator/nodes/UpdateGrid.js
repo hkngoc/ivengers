@@ -64,7 +64,7 @@ UpdateGrid.prototype.travelGrid = function(playerId, pos, grid) {
 
     for (const neighbor of neighbors) {
       // really walkable under bomb flame remain
-      const { score: scoreProfit, merged: mergeProfit } = this.ref.scoreForWalk(playerId, node, neighbor, grid, nextTravelCost, 500, node.scoreProfit);
+      const { score: scoreProfit, merged: mergeProfit } = this.ref.scoreForWalk(playerId, node, neighbor, grid, nextTravelCost, 700, node.scoreProfit);
       const walkable = this.canPlayerWalk(playerId, node, neighbor, grid, nextTravelCost, 0, 300, false, mergeProfit);
 
       if (neighbor.closed || !walkable) {
@@ -148,6 +148,7 @@ UpdateGrid.prototype.findSafePlace = function(playerId, pos, grid) {
     const node = openList.dequeue();
     node.safeClosed = true;
 
+    const nextTravelCost = node.safeTravelCost + 1;
     if (this.isSafePlace(node, playerId)) {
       const fasterEnemy = this.ref.fasterEnemy(node, nextTravelCost, preCost);
       safePlaceCount++;
@@ -158,7 +159,6 @@ UpdateGrid.prototype.findSafePlace = function(playerId, pos, grid) {
       }
     }
 
-    const nextTravelCost = node.safeTravelCost + 1;
     const neighbors = grid.getNeighbors(node, DiagonalMovement.Never, playerNumber);
     for (const neighbor of neighbors) {
       // skip this neighbor if it has been inspected before

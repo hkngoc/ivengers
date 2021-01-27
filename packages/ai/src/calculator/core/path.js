@@ -32,7 +32,7 @@ AI.prototype.checkPathCanWalk = function(positions) {
       grid,
       travelCost,
       0,
-      500,
+      700,
       false,
       profit
     )

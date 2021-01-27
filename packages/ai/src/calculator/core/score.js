@@ -42,7 +42,7 @@ AI.prototype.scoreFor = function(which) {
   }
 };
 
-AI.prototype.scoreForWalk = function(playerId, node, neighbor, grid, travelCost, offset = 500, scoreProfit = {}) {
+AI.prototype.scoreForWalk = function(playerId, node, neighbor, grid, travelCost, offset = 700, scoreProfit = {}) {
   const { map_info: { gifts, spoils } } = this.map;
 
   const { x, y, virusTravel = [], humanTravel = [] } = neighbor;

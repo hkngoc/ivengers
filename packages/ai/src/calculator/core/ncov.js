@@ -1,7 +1,7 @@
 import AI from './ai';
 import _ from 'lodash';
 
-AI.prototype.canPlayerWalkBySarsCov = function(playerId, node, neighbor, grid, cost, preCost = 0, offset = 500, byPassParam, profit = {}) {
+AI.prototype.canPlayerWalkBySarsCov = function(playerId, node, neighbor, grid, cost, preCost = 0, offset = 700, byPassParam, profit = {}) {
   const tpc = this.timeToCrossACell(playerId);
   const travelTime = tpc * cost;
 
@@ -46,15 +46,15 @@ AI.prototype.countingScareByRadar = function(node, grid, offset = 2) {
         continue;
       }
       const { humanTravel = [], virusTravel = [] } = near;
-      scare.push(..._.map(humanTravel, h => ({ ...h, distance, type: 'human' })));
-      scare.push(..._.map(virusTravel, v => ({ ...v, distance, type: 'virus' })));
+      scare.push(..._.map(humanTravel, h => ({ ...h, distance, dx: i, dy: j, type: 'human' })));
+      scare.push(..._.map(virusTravel, v => ({ ...v, distance, dx: i, dy: j, type: 'virus' })));
     }
   }
 
-  return scare;
+  return _.uniqBy(scare, o => `${o.type}-${o.index}`);
 };
 
-AI.prototype.humanCanBeInfected = function(pos, grid, cost, offset = 500) {
+AI.prototype.humanCanBeInfected = function(pos, grid, cost, offset = 700) {
   const { x, y } = pos;
   const node = grid.getNodeAt(x, y);
   const { humanTravel = [], virusTravel = [] } = node;

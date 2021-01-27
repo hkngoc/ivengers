@@ -29,6 +29,7 @@ FindCandidate.prototype.tick = function(tree) {
   } = this.ref;
 
   const safeCandidates = [];
+  const passive = this.ref.playerPassiveNumber(myId);
 
   for (let i = 0; i < rows; ++i) {
     for (let j = 0; j < cols; ++j) {
@@ -41,7 +42,6 @@ FindCandidate.prototype.tick = function(tree) {
       }
 
       const scare = this.ref.countingScareByRadar(node, grid);
-      const passive = this.ref.playerPassiveNumber(myId);
     }
   }
 };
