@@ -142,7 +142,7 @@ UpdateGrid.prototype.findSafePlace = function(playerId, pos, grid) {
   openList.enqueue(startNode);
 
   let safe = false;
-  let safePlaceCount = 0;
+  let faster0 = 0;
 
   while (!openList.isEmpty()) {
     const node = openList.dequeue();
@@ -151,9 +151,13 @@ UpdateGrid.prototype.findSafePlace = function(playerId, pos, grid) {
     const nextTravelCost = node.safeTravelCost + 1;
     if (this.isSafePlace(node, playerId)) {
       const fasterEnemy = this.ref.fasterEnemy(node, nextTravelCost, preCost);
-      safePlaceCount++;
+      const faster = this.ref.fasterEnemy(node, nextTravelCost, 0);
 
-      if (fasterEnemy || safePlaceCount >= 6) {
+      if (faster) {
+        faster0++;
+      }
+
+      if (fasterEnemy || faster0 >= 4) {
         safe = true;
         break;
       }
@@ -194,7 +198,7 @@ UpdateGrid.prototype.canPlayerWalk = function(...params) {
 };
 
 UpdateGrid.prototype.isSafePlace = function(node, playerId) {
-  const { flameRemain = [], tempFlameRemain = [], safeTravelCost } = node;
+  const { flameRemain = [], tempFlameRemain = [], enemyFlameRemain = [], safeTravelCost } = node;
   // const tpc = this.ref.timeToCrossACell(playerId);
   // const max = Math.round(0.8 * Math.round(2000 / tpc));
 

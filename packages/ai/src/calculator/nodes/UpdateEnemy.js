@@ -21,7 +21,18 @@ UpdateEnemy.prototype.tick = function(tree) {
   const { map, grid } = this.ref;
   const player = this.ref.getEnemyPlayer();
 
-  const { id, currentPosition: { col:x, row: y } } = player;
+  const { id, power, currentPosition: { col:x, row: y } } = player;
+
+  const tempBomb = {
+    col: x,
+    row: y,
+    index: -1, // hardcode, current implement no need infor about index of bomb, but it may need in future
+    playerId: id,
+    power,
+    remainTime: 2000
+  };
+
+  this.ref.drawBombFlames(tempBomb, grid, this.ref.updateFlameFunction, 'enemyFlameRemain');
 
   this.travelGrid(id, { x, y }, grid);
 
