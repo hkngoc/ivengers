@@ -14,6 +14,7 @@ import CalculateBombDelay from './CalculateBombDelay';
 import CalculateEmpty from './CalculateEmpty';
 
 import FindCandidate from './FindCandidate';
+import DeadOrAlive from './DeadOrAlive';
 
 import FindBonusCandidate from './FindBonusCandidate';
 import HasBonusCandidate from './HasBonusCandidate';
@@ -81,6 +82,7 @@ export {
 
   IsNearTeleport,
   FindCandidate,
+  DeadOrAlive,
 
   TargetBonusStillGood,
   TargetSafeStillGood,

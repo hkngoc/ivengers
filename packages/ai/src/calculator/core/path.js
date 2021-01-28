@@ -77,7 +77,7 @@ AI.prototype.checkPathInDanger = function(positions) {
   return accept;
 };
 
-AI.prototype.tracePath = function(pos, grid) {
+AI.prototype.tracePath = function(pos, grid, key = 'parent') {
   let node = grid.getNodeAt(pos.x, pos.y);
   let directs = '';
   const positions = [{
@@ -85,8 +85,8 @@ AI.prototype.tracePath = function(pos, grid) {
     y: pos.y
   }];
 
-  while (node.parent) {
-    const { parent } = node;
+  while (node[key]) {
+    const { [key]: parent } = node;
     const direct = getDirect({ x: parent.x, y: parent.y }, { x: node.x, y: node.y });
     directs = direct + directs;
     positions.splice(0, 0, {

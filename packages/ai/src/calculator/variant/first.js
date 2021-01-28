@@ -184,7 +184,8 @@ First.prototype.buildTree = function() {
               new Priority({
                 children: [
                   new NODES.HasSafeCandidate(this),
-                  new NODES.FindSafePlace(this)
+                  new NODES.FindSafePlace(this),
+                  new NODES.DeadOrAlive(this)
                   // dead or alive. implement case all place are not safe -> find best place in that context
                 ]
               }),
